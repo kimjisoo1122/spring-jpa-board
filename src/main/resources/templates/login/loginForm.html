@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout.html}">
+<head>
+  <title layout:fragment="title">Login</title>
+  <link rel="stylesheet" th:href="@{/css/loginForm.css}">
+</head>
+<body>
+<div layout:fragment="content" class="content">
+  <div class="loginform-container">
+    <form
+      class="loginform"
+      th:action="@{/login}"
+      th:method="post"
+      th:object="${memberDTO}">
+      <h1 class="loginform-title">로그인</h1>
+      <label th:for="email"></label>
+      <input type="text"
+             th:field="*{email}"
+             placeholder="이메일을 입력해주세요">
+      <span
+        th:if="${#fields.hasErrors('email')}"
+        th:errors="*{email}"
+        class="loginform-error"></span>
+      <label th:for="password"></label>
+      <input type="password"
+             th:field="*{password}"
+             placeholder="비밀번호를 입력해주세요">
+      <span
+        th:if="${#fields.hasErrors('password')}"
+        th:errors="*{password}"
+        class="loginform-error"></span>
+
+      <div class="loginform-btn-container">
+        <button class="loginform-loginbtn" type="submit">로그인</button>
+        <button class="loginform-signbtn" type="button">
+          <a href="">회원가입</a>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+</body>
+</html>
