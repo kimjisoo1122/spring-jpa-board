@@ -33,6 +33,9 @@ public class Member extends BaseEntity{
             insertable = false, updatable = false)
     private LocalDateTime joinedDate;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     public static Member createMember(MemberDTO memberDTO) {
 
         Member member = new Member();
@@ -41,10 +44,8 @@ public class Member extends BaseEntity{
         member.setName(memberDTO.getName());
         member.setEmail(memberDTO.getEmail());
         member.setPhone(memberDTO.getPhone());
-
-        // 암호화
         member.setPassword(memberDTO.getPassword());
+        member.setUserRole(UserRole.USER);
         return member;
-
     }
 }

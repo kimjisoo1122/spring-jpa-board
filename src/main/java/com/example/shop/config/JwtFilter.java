@@ -1,41 +1,62 @@
 package com.example.shop.config;
 
-import com.example.shop.service.LoginService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Date;
 
-
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final LoginService loginService;
     private final String secretKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // UserName Token에서 꺼내기
-        String username = "";
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        // 권한 부여
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("USER")));
+        // 헤더에 토큰이 없거나 토큰의 이름이 jwt양식이 아닌 경우 필터
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            log.error("jwt가 유효하지 않습니다");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        // Detail
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String token = authorization.replace("Bearer ", "");
+
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // jwt 만료 확인
+            if (claims.getExpiration().before(new Date())) {
+                log.error("jwt의 유효기간이 만료 되었습니다.");
+                filterChain.doFilter(request, response);
+            }
+
+            String username = claims.getSubject();
+
+//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                    username,
+//                    null,
+//                    List.of(new SimpleGrantedAuthority("USER")));
+//
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception ex) {
+//            SecurityContextHolder.clearContext();
+        }
         filterChain.doFilter(request, response);
     }
 }

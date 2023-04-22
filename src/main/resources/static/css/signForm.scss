@@ -1,4 +1,4 @@
-.loginform-container {
+.signform-container {
   width: 1200px;
   height: 500px;
   margin: 0 auto;
@@ -7,7 +7,7 @@
   justify-content: center;
 }
 
-.loginform {
+.signform-form {
   width: 500px;
   height: 200px;
   padding: 20px;
@@ -22,21 +22,14 @@
     border-radius: 5px;
     border: 1px solid #ccc;
   }
+  .signform-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 25px;
+  }
 }
 
-.loginform-title {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 25px;
-}
-
-.loginform-title {
-   text-align: center;
-   margin-bottom: 20px;
-   font-size: 25px;
- }
-
-.loginform-btn-container {
+.signform-btn-container {
   margin-top: 10px;
   display: flex;
 
@@ -53,17 +46,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
-    a {
-      text-decoration: none;
-      color: black;
-    }
   }
 }
 
-.loginform-error {
+.form-error {
   color: red;
   font-size: 10px;
   margin-top: 5px;
 }
-
