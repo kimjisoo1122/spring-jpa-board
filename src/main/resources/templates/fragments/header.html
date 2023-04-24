@@ -1,8 +1,10 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <header th:fragment="header" class="header">
   <ul class="header-list-container">
     <li class="header-list">
-      <a th:href="@{/}">Home</a>
+      <a th:href="@{/}" onclick="next()">Home</a>
     </li>
     <li class="header-list">
       <a th:href="@{/shop}">Shop</a>
@@ -10,8 +12,16 @@
     <li class="header-list">
       <a th:href="@{/board}">Board</a>
     </li>
-    <li class="header-list">
-      <a th:href="@{/login}">Login</a>
+    <li class="header-list" sec:authorize="isAuthenticated()">
+      <form  action="/logout" method="post">
+        <input type="submit" th:value="Logout"
+               style="background-color: white; border: none; font: inherit; font-size: 20px; cursor: pointer">
+      </form>
+    <li class="header-list" sec:authorize="!isAuthenticated()">
+      <a
+        sec:authorize="!isAuthenticated()"
+        th:href="@{/login}">Login
+      </a>
     </li>
   </ul>
 </header>

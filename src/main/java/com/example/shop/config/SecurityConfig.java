@@ -1,60 +1,64 @@
 package com.example.shop.config;
 
+import com.example.shop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final MemberRepository memberRepository;
 
-//    @Value("${jwt.secret}")
-//    private String secretKey;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/member/sign", "/").permitAll()
+                .anyRequest().authenticated()
+//                .anyRequest().hasRole("USER")
+                .and()
+                .formLogin()
+                .loginPage("/login").permitAll()
+                .usernameParameter("email")
+                .successHandler(new CustomLoginSuccessHandler())
+                .failureHandler(new CustomLoginFailureHandler())
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .invalidateHttpSession(true)
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .and()
+//                .authenticationProvider(new CustomAuthenticationProvider(memberRepository, passwordEncoder()))
+                // jwt를 사용하여 인증을 jwt에 위임 세션상태를 유지하지 않음
+                // cross site request forgery는 사용자의 세션을 탈취하여 공격하기에
+                // 세션을 사용하지 않으면 공격에 안전
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // 스프링시큐리티는 기본적으로 get을 제외한 http요청에 csrf토큰을 주고 받아 보안함
+        return http.build();
+    }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        return httpSecurity
-//                .httpBasic().disable() // 기존 http보안 프로토콜을  쓸거냐? 취약하므로 https사용권장
-//                .csrf().disable() // cross-site request forgery 공격방지기능 사용하지 않는다
-//                // jwt를 사용할 경우 보통 사용하지 않는다
-//                .cors().and() // cross-origin-resource-sharing를 사용
-//                // 웹 애플리케이션에서 다른 도메인의 리소스에 접근할 수 있도록 해주는 보안 메커니즘
-//                .authorizeRequests()
-//                .antMatchers("/login/**", "/").permitAll()
-//                .antMatchers("/board/**").authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .addFilterBefore(new JwtFilter(secretKey), UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.formLogin()
-//                .loginPage("/login").permitAll()
-////                .defaultSuccessUrl("/")
-////                .usernameParameter("email")
-////                .failureUrl("/login")
-//                .and()
-//                .logout().permitAll();
-//        http.authorizeRequests()
-////                .mvcMatchers("/", "/login/**").permitAll()
-//                .mvcMatchers("/admin/**").hasRole("ADMIN")
-//                .anyRequest().authenticated();
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

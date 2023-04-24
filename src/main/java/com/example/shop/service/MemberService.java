@@ -8,6 +8,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class MemberService {
         return member.getId();
     }
 
-    public Member findMember(Long memberId) {
+    public Optional<Member> findMember(Long memberId) {
         return memberRepository.findMember(memberId);
     }
 }

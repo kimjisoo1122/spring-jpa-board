@@ -18,8 +18,8 @@ public class MemberRepository {
         em.persist(member);
     }
 
-    public Member findMember(Long memberId) {
-        return em.find(Member.class, memberId);
+    public Optional<Member> findMember(Long memberId) {
+        return Optional.ofNullable(em.find(Member.class, memberId));
     }
 
     /**

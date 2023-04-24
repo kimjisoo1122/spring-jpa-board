@@ -4,14 +4,13 @@ import com.example.shop.dto.MemberDTO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Table(indexes = @Index(name = "idx_email", columnList = "email"))
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity{
 
@@ -39,13 +38,12 @@ public class Member extends BaseEntity{
     public static Member createMember(MemberDTO memberDTO) {
 
         Member member = new Member();
-        Address address = new Address(memberDTO.getCity(), memberDTO.getStreet(), memberDTO.getZipcode());
-        member.setAddress(address);
-        member.setName(memberDTO.getName());
-        member.setEmail(memberDTO.getEmail());
-        member.setPhone(memberDTO.getPhone());
-        member.setPassword(memberDTO.getPassword());
-        member.setUserRole(UserRole.USER);
+        member.address = new Address(memberDTO.getCity(), memberDTO.getStreet(), memberDTO.getZipcode());
+        member.name = memberDTO.getName();
+        member.email = memberDTO.getEmail();
+        member.phone = memberDTO.getPhone();
+        member.password = memberDTO.getPassword();
+        member.userRole = UserRole.USER;
         return member;
     }
 }

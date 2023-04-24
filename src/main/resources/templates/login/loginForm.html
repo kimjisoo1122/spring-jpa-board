@@ -20,20 +20,16 @@
       <label th:for="email"></label>
       <input type="text"
              th:field="*{email}"
-             placeholder="이메일을 입력해주세요">
+             placeholder="이메일을 입력해주세요.">
       <span
-        th:if="${#fields.hasErrors('email')}"
-        th:errors="*{email}"
-        class="loginform-error"></span>
+        th:if="${error}"
+        class="loginform-error">
+        아이디, 비밀번호를 확인해주세요.
+      </span>
       <label th:for="password"></label>
       <input type="password"
              th:field="*{password}"
              placeholder="비밀번호를 입력해주세요">
-      <span
-        th:if="${#fields.hasErrors('password')}"
-        th:errors="*{password}"
-        class="loginform-error"></span>
-
       <div class="loginform-btn-container">
         <button class="loginform-loginbtn" type="submit">로그인</button>
         <button class="loginform-signbtn" type="button">

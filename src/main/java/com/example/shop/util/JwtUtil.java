@@ -6,27 +6,39 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
+@Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
     private static String secretKey;
-    // 1시간
-    private static final Long EXPIRATION_MS = 3600000L;
+    public static final String ACCESS_TOKEN = "accessToken";
+    public static final String REFRESH_TOKEN = "refreshToken";
+    public static final Long EXPIRATION_MS = 3600000L;
 
-    public static String createJwt(String userName) {
+    @Value("${jwt.secret}")
+    private void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 
-//        Claims claims = Jwts.claims(); // jwt의 저장소 map
-//        claims.put("username", userName);
+    public static String createJwt(String memberId) {
+
         return Jwts.builder()
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-//                .setClaims(claims)
-                .setSubject(userName)
+                .setSubject(memberId)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public static Claims parseJwt(String token) {
+        String parseToken = token.replace("Bearer ", "");
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(parseToken).getBody();
+    }
+
+    public static boolean isExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 }
