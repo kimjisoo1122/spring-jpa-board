@@ -10,8 +10,8 @@ import java.io.IOException;
 
 public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        request.getSession().setAttribute("error", exception.getMessage());
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        request.getSession().setAttribute("loginError", authException.getMessage());
         response.sendRedirect("/login");
     }
 }

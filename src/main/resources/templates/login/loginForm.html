@@ -22,23 +22,26 @@
              th:field="*{email}"
              placeholder="이메일을 입력해주세요.">
       <span
-        th:if="${error}"
+        th:text="${loginError}"
         class="loginform-error">
-        아이디, 비밀번호를 확인해주세요.
       </span>
       <label th:for="password"></label>
       <input type="password"
              th:field="*{password}"
              placeholder="비밀번호를 입력해주세요">
+      <span
+        class="loginform-error-password">
+       </span>
       <div class="loginform-btn-container">
-        <button class="loginform-loginbtn" type="submit">로그인</button>
+        <button class="loginform-loginbtn" type="submit" onclick="return validForm()">로그인</button>
         <button class="loginform-signbtn" type="button">
           <a th:href="@{/member/sign}">회원가입</a>
         </button>
       </div>
+
     </form>
   </div>
-
+  <script th:src="@{/js/loginForm.js}"></script>
 </div>
 </body>
 </html>

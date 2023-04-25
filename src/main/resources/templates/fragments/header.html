@@ -13,13 +13,12 @@
       <a th:href="@{/board}">Board</a>
     </li>
     <li class="header-list" sec:authorize="isAuthenticated()">
-      <form  action="/logout" method="post">
+      <form action="/logout" method="post">
         <input type="submit" th:value="Logout"
                style="background-color: white; border: none; font: inherit; font-size: 20px; cursor: pointer">
       </form>
     <li class="header-list" sec:authorize="!isAuthenticated()">
       <a
-        sec:authorize="!isAuthenticated()"
         th:href="@{/login}">Login
       </a>
     </li>

@@ -43,7 +43,7 @@ public class Member extends BaseEntity{
         member.email = memberDTO.getEmail();
         member.phone = memberDTO.getPhone();
         member.password = memberDTO.getPassword();
-        member.userRole = UserRole.USER;
+        member.userRole = UserRole.ROLE_USER;
         return member;
     }
 }

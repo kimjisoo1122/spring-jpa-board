@@ -1,15 +1,14 @@
 package com.example.shop.config;
 
-import com.example.shop.exception.JwtAuthenticationException;
 import com.example.shop.util.CookieUtil;
 import com.example.shop.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,53 +17,59 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    private final CustomUserDetailService userDetailService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if(permit(request.getRequestURI())) {
+        // 쿠키에 저장된 accessToken을 가져옵니다.
+        String accessToken = CookieUtil.getCookie(request, JwtUtil.ACCESS_TOKEN)
+                .map(Cookie::getValue)
+                .orElse("");
+        if (accessToken.isBlank()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        Cookie cookie = CookieUtil.getCookie(request, JwtUtil.ACCESS_TOKEN);
-        String accessToken = cookie.getValue();
+        // accessToken을 파싱하여 인증토큰을 생성합니다.
+        try {
+            Claims accessClaims = JwtUtil.parseJwt(accessToken);
+            String email = accessClaims.getSubject();
+            UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(email);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        // 헤더에 토큰이 없거나 토큰의 이름이 JWT양식이 아닌 경우 Login
-        if (accessToken.isBlank()) {
-            log.info("인증된 사용자가 아닙니다.");
-            // 인증이 필요하면 AuthenticationException가 발생되어 AuthenticationEntryPoint로 이동한다
-            // default entryPoint는 login페이지로 이동시킨다.
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setHeader(HttpHeaders.LOCATION, "/");
-        }
-        Claims claims = JwtUtil.parseJwt(accessToken);
-        // JWT 만료 확인
-        if (JwtUtil.isExpired(claims)) {
-            log.info("JWT가 만료 되었습니다.");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setHeader(HttpHeaders.LOCATION, "/");
-        }
+        } catch (ExpiredJwtException e) {
+            try {
+                CookieUtil.getCookie(request, JwtUtil.REFRESH_TOKEN)
+                        .map(Cookie::getValue)
+                        .map(JwtUtil::parseJwt)
+                        .ifPresent(refreshClaim -> {
+                            // 리프레쉬토큰이 유효하면 accessToken 재발급
+                            String email = refreshClaim.getSubject();
+                            String newAccessToken = JwtUtil.createJwt(email, JwtUtil.ACEESS_TOKEN_EXPIRATION);
+                            Cookie newJwtCookie = CookieUtil.createJwtCookie(JwtUtil.ACCESS_TOKEN, newAccessToken);
+                            response.addCookie(newJwtCookie);
 
-        String memberId = claims.getSubject();
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, null);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                            // 리프레쉬토큰 재발급
+                            String newRefreshToken = JwtUtil.createJwt(email, JwtUtil.REFRESH_TOKEN_EXPIRATION);
+                            Cookie newRefreshCookie = CookieUtil.createJwtCookie(JwtUtil.REFRESH_TOKEN, newRefreshToken);
+                            response.addCookie(newRefreshCookie);
+
+                            UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(email);
+                            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                        });
+            } catch (ExpiredJwtException ex) {
+                filterChain.doFilter(request, response);
+            }
+        }
         filterChain.doFilter(request, response);
     }
-
-    private boolean permit(String uri) {
-        List<String> permitUri = List.of("/", "/login", "/member/sign");
-        return permitUri.contains(uri);
-    }
-
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public void handleJwtAuthentication(HttpServletResponse response, JwtAuthenticationException ex) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.sendRedirect("/");
+    private UsernamePasswordAuthenticationToken getAuthenticationToken(String email) {
+        UserDetails userDetails = userDetailService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }
