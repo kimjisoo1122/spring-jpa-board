@@ -7,10 +7,8 @@ pwdElement.addEventListener('blur', () => {
 	const pwdErrElement = document.querySelector('.signform-error-password');
 	pwdErrElement.innerText = errorMessage;
 	if (errorMessage) {
-		pwdErrElement.classList.add('form-error');
 		pwdErrElement.style.display = 'block';
 	} else {
-		pwdErrElement.classList.remove('form-error');
 		pwdErrElement.style.display = 'block';
 	}
 })
@@ -18,36 +16,29 @@ pwdElement.addEventListener('blur', () => {
 
 // 이메일 유효성 검증
 const emailElement = document.querySelector('input[name="email"]');
-const emailErrorElement = document.querySelector('.signform-error-email');
 
 emailElement.addEventListener('blur', () => {
 	const emailValue = emailElement.value;
 	const errorMessage = validEmail(emailValue);
-	emailErrorElement.innerText = errorMessage;
+	const emailErrElement = document.querySelector('.signform-error-email');
+	emailErrElement.innerText = errorMessage;
 	if (errorMessage) {
-		emailErrorElement.style.display = 'block';
-		emailErrorElement.classList.add('form-error');
+		emailErrElement.style.display = 'block';
 	} else {
-		emailErrorElement.style.display = 'none';
-		emailErrorElement.classList.remove('form-error');
+		emailErrElement.style.display = 'none';
 	}
 });
-
-
 
 // 휴대폰번호 유효성 검증
 const phElement = document.querySelector('input[name="phone"]');
 phElement.addEventListener('blur', () => {
 	const phoneValue = phElement.value;
-
 	const phErrElement = document.querySelector('.signform-error-phone');
 	phErrElement.innerText = validPhone(phoneValue)
 	if (validPhone(phoneValue)) {
 		phErrElement.style.display = 'block';
-		phErrElement.classList.add('form-error');
 	} else {
 		phErrElement.style.display = 'none';
-		phErrElement.classList.remove('form-error');
 	}
 })
 function validPhone(phoneNumber) {
@@ -79,7 +70,7 @@ function validForm() {
 		return false;
 	}
 	return !(validPhone(phoneElement.value)
-			&& validPassword(passwordElement.value)
-			&& validEmail(emailElement.value));
+			|| validPassword(passwordElement.value)
+			|| validEmail(emailElement.value));
 }
 

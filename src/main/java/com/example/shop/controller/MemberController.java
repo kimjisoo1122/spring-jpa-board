@@ -20,7 +20,6 @@ public class MemberController {
     private final MemberService memberService;
     private static final String SIGN_FORM = "member/signForm";
 
-
     @GetMapping("/sign")
     public String signForm(
             @ModelAttribute("memberDTO") MemberDTO memberDTO) {
@@ -32,11 +31,15 @@ public class MemberController {
             @Valid MemberDTO memberDTO,
             BindingResult bindingResult) {
 
+
         if (bindingResult.hasErrors()) {
             return SIGN_FORM;
         }
+        if (memberService.duplicateEmail(memberDTO.getEmail())) {
+            bindingResult.rejectValue("email", "", "중복된 이메일 입니다.");
+            return SIGN_FORM;
+        }
         memberService.join(memberDTO);
-
         return LoginController.LOGIN_FORM;
     }
 }

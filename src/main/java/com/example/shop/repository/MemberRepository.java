@@ -18,16 +18,11 @@ public class MemberRepository {
         em.persist(member);
     }
 
-    public Optional<Member> findMember(Long memberId) {
+    public Optional<Member> findById(Long memberId) {
         return Optional.ofNullable(em.find(Member.class, memberId));
     }
 
-    /**
-     * 이메일(유니크키)로 멤버를 조회한다.
-     * @param email
-     * @return Optional<Member>
-     */
-    public Optional<Member> findMemberByEmail(String email) {
+    public Optional<Member> findByEmail(String email) {
         String jpql = "select m from Member m where m.email = :email";
         List<Member> findMember = em.createQuery(jpql, Member.class)
                 .setParameter("email", email)

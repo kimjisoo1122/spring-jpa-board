@@ -1,0 +1,59 @@
+.content {
+  width: 800px;
+  margin: 50px auto 0;
+}
+
+.board-top {
+  margin-bottom: 20px;
+  font-size: 25px;
+  text-align: center;
+}
+
+.board-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  position: relative;
+}
+
+.board-left {
+  width: 500px;
+  > div {
+    padding: 5px;
+  }
+}
+
+.board-user {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.board-title {
+  font-size: 18px;
+}
+
+.board-category span {
+  font-size: 11px;
+  color: white;
+  background-color: lightskyblue;
+  padding: 3px;
+  border-radius: 7px;
+  margin-bottom: 2px;
+}
+
+.board-right {
+  width: 150px;
+  font-size: 12px;
+  text-align: right;
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+
+  span {
+    margin-left: 10px;
+  }
+}
+

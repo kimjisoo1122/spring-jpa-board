@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html
-  lang="en"
+  lang="ko"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{layout/layout.html}">
 <head>
   <title layout:fragment="title">Login</title>
-  <link rel="stylesheet" th:href="@{/css/loginForm.css}">
+  <link layout:fragment="css" rel="stylesheet" th:href="@{/css/loginForm.css}">
 </head>
 <body>
 <div layout:fragment="content" class="content">
@@ -38,7 +38,6 @@
           <a th:href="@{/member/sign}">회원가입</a>
         </button>
       </div>
-
     </form>
   </div>
   <script th:src="@{/js/loginForm.js}"></script>

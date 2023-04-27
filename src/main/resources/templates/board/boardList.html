@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout.html}">
+<head>
+  <title layout:fragment="title">Board</title>
+  <link layout:fragment="css" rel="stylesheet" th:href="@{/css/boardList.css}">
+</head>
+<body>
+<div layout:fragment="content" class="content">
+  <h1 class="board-top">게시판</h1>
+  <div class="board-container">
+    <div class="board-left">
+      <div class="board-user">
+        <p>닉네임</p>
+        <p>레벨</p>
+        <p>약 1시간전</p>
+      </div>
+      <div class="board-title">
+        <h2>글제목</h2>
+      </div>
+      <div class="board-category">
+        <span>카테고리</span>
+      </div>
+    </div>
+    <div class="board-right">
+      <span>조회수</span>
+      <span>댓글</span>
+      <span>추천수</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

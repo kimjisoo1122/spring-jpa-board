@@ -29,7 +29,6 @@ pwdElement.addEventListener('blur', () => {
 function validForm() {
 	const passwordElement = document.querySelector('input[name="password"]');
 	const emailElement = document.querySelector('input[name="email"]');
-
 	if (!emailElement.value) {
 		alert('이메일을 입력해주세요.');
 		return false;
@@ -38,6 +37,5 @@ function validForm() {
 		alert('비밀번호를 입력해주세요.');
 		return false;
 	}
-	return !(validPassword(passwordElement.value)
-			&& validEmail(emailElement.value));
+	return !(validPassword(passwordElement.value) || validEmail(emailElement.value))
 }

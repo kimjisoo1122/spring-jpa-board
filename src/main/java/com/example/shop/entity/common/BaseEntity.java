@@ -1,5 +1,6 @@
-package com.example.shop.entity;
+package com.example.shop.entity.common;
 
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -12,17 +13,18 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity{
 
     @CreatedBy
-    private String createUser;
+    public String createUser;
     @LastModifiedBy
-    private String updateUser;
+    public String updateUser;
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createDate;
+    public LocalDateTime createDate;
     @LastModifiedDate
-    private LocalDateTime updateDate;
+    public LocalDateTime updateDate;
 }

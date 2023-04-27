@@ -1,4 +1,4 @@
-package com.example.shop.config;
+package com.example.shop.config.security;
 
 import com.example.shop.util.CookieUtil;
 import com.example.shop.util.JwtUtil;

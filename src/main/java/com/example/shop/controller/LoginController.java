@@ -1,18 +1,13 @@
 package com.example.shop.controller;
 
 import com.example.shop.dto.MemberDTO;
-import com.example.shop.util.CookieUtil;
-import com.example.shop.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -34,19 +29,5 @@ public class LoginController {
             session.removeAttribute(loginErorr);
         }
         return LOGIN_FORM;
-    }
-
-    @GetMapping("/logout")
-    public String logout(
-            HttpServletRequest request,
-            HttpServletResponse response) {
-        CookieUtil.getCookie(request, JwtUtil.ACCESS_TOKEN)
-                .ifPresent(cookie -> {
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                    SecurityContextHolder.clearContext();
-                });
-
-        return LoginController.LOGIN_FORM;
     }
 }

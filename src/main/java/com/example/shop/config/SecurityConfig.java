@@ -1,11 +1,12 @@
 package com.example.shop.config;
 
+import com.example.shop.config.filter.JwtFilter;
+import com.example.shop.config.security.*;
 import com.example.shop.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -25,8 +26,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/member/sign", "/").permitAll()
-                .antMatchers(HttpMethod.POST, "/login", "member/sign").authenticated()
+                .mvcMatchers("/member/sign", "/").permitAll()
+//                .antMatchers(HttpMethod.POST, "/login", "member/sign").authenticated()
                 .anyRequest().authenticated()
 //                .anyRequest().hasRole("USER")
                 .and()
@@ -37,23 +38,27 @@ public class SecurityConfig {
                 .failureHandler(new CustomLoginFailureHandler())
                 .and()
                 .logout()
-                .logoutUrl("/logout")
+                .logoutUrl("/logout").permitAll()
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies(JwtUtil.ACCESS_TOKEN)
+                .deleteCookies(JwtUtil.REFRESH_TOKEN)
                 .and()
                 .authenticationProvider(new CustomAuthenticationProvider(customUserDetailService, passwordEncoder()))
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
-                // jwt를 사용하여 인증을 jwt에 위임 세션상태를 유지하지 않음
-                // cross site request forgery는 사용자의 세션을 탈취하여 공격하기에
-                // 세션을 사용하지 않으면 공격에 안전
+
                 .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // 스프링시큐리티는 기본적으로 get을 제외한 http요청에 csrf토큰을 주고 받아 보안함
+        // csrf공격이란 ? 해당사이트의 인증된 유저를 대상으로 타 사이트의 스크립트코드를 클릭유도하여
+        // 권한을 가진 대상으로 하여금 공격대상사이트에 의도치않은 스크립트 요청
+        // xss공격이란 ? 스크립트를 클릭유도하여 유저의 정보 탈취 및 서버에 의도치않은 스크립트 요청
+        // 기본적으로 세션을 사용하지 않는다는건 해당유저의 세션탈취(xss공격)에 안전
+        // jwt를 쿠키에 담아 쿠키를 httponly또는 secure(https)처리하여 스크립트로는 서버에 요청 불가
         return http.build();
     }
 

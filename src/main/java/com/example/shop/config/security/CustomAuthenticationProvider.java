@@ -1,4 +1,4 @@
-package com.example.shop.config;
+package com.example.shop.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,7 +15,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
         if (authentication.isAuthenticated()) {
             return authentication;
         } else {
@@ -27,7 +26,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
             } else {
                 throw new BadCredentialsException("아이디, 비밀번호를 확인해주세요.");
-                // BadCredentialsException는 entryPoint가 처리한다.
             }
         }
     }

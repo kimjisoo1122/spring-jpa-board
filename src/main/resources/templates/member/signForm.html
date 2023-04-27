@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html
-  lang="en"
+  lang="ko"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{layout/layout.html}">
 <head>
   <title layout:fragment="title">Sign</title>
-  <link rel="stylesheet" th:href="@{/css/signForm.css}">
+  <link  layout:fragment="css" rel="stylesheet" th:href="@{/css/signForm.css}">
 </head>
 <body>
 <div layout:fragment="content" class="content">
@@ -17,23 +17,25 @@
       th:method="post">
 
       <h1 class="signform-title">회원가입</h1>
-      <label th:for="name"></label>
+      <label th:for="email"></label>
       <input
         type="text"
-        th:field="*{name}"
-        placeholder="이름을 입력해주세요.">
+        th:field="*{email}"
+        placeholder="이메일을 입력해주세요.">
+<!--      th:errors="*{email}"-->
+      <span class="signform-error-global" th:errors="*{email}"></span>
+      <span class="signform-error-email" ></span>
       <label th:for="password"></label>
       <input
         type="password"
         th:field="*{password}"
         placeholder="비밀번호를 입력해주세요.">
       <span class="signform-error-password"></span>
-      <label th:for="username"></label>
+      <label th:for="name"></label>
       <input
         type="text"
-        th:field="*{email}"
-        placeholder="이메일을 입력해주세요.">
-      <span class="signform-error-email"></span>
+        th:field="*{name}"
+        placeholder="이름을 입력해주세요.">
       <label th:for="phone"></label>
       <input
         type="text"

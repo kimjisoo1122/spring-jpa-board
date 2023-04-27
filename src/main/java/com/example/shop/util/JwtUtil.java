@@ -1,6 +1,7 @@
 package com.example.shop.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AccessLevel;
@@ -34,7 +35,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static Claims parseJwt(String token) {
+    public static Claims parseJwt(String token) throws JwtException {
         String parseToken = token.replace("Bearer ", "");
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(parseToken).getBody();
     }
