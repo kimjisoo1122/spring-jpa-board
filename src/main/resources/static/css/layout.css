@@ -58,6 +58,12 @@ table {
   margin: 0 auto;
 }
 
+span[class*=error] {
+  color: red;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
 .footer {
   position: fixed;
   bottom: 0;

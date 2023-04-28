@@ -1,0 +1,53 @@
+.content {
+  width: 800px;
+  margin: 50px auto 0;
+}
+
+.boardform-container {
+}
+
+.boardForm-title {
+  font-size: 25px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.boardForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input, select, textarea {
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  select {
+    padding: 10px 6px;
+  }
+
+  textarea {
+    height: 200px;
+    resize: none;
+    font-style: italic;
+  }
+}
+
+.boardform-button-container {
+  text-align: right;
+
+  button {
+    color: white;
+    background-color: lightskyblue;
+    padding: 5px;
+    border-radius: 7px;
+    border: none;
+    width: 50px;
+    cursor: pointer;
+  }
+}
+
+[class^="boardform-error"] {
+  margin-left: 5px;
+}

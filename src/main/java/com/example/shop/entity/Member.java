@@ -49,8 +49,9 @@ public class Member extends BaseEntity {
         return member;
     }
 
-    public void setMemberAuditor(Long memberId) {
-        this.createUser = memberId.toString();
-        this.updateUser = memberId.toString();
+    public void setMemberAuditor(Member member) {
+        this.updateUser = member.getId().toString();
+        this.createUser = member.getId().toString();
+        this.createDate = member.getUpdateDate();
     }
 }

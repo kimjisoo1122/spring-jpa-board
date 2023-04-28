@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final HttpSession session;
 
     public Long join(MemberDTO memberDTO) {
         // BCrypt 해쉬 암호화
@@ -25,8 +27,10 @@ public class MemberService {
         Member member = Member.createMember(memberDTO);
         // 회원 가입
         memberRepository.save(member);
-        // creatUser, updateUser jpa audit 수정
-        member.setMemberAuditor(member.getId());
+        // Auditor 설정 (회원가입시에는 인증객체가 없어서 세션에 임시저장)
+        String memberId = member.getId().toString();
+        session.setAttribute("joinId", memberId);
+        member.setMemberAuditor(member);
         return member.getId();
     }
 

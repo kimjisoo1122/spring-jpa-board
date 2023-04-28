@@ -57,10 +57,4 @@
   color: black;
 }
 
-[class^=loginform-error] {
-  color: red;
-  font-size: 10px;
-  margin-top: 5px;
-}
-
 /*# sourceMappingURL=loginForm.css.map */

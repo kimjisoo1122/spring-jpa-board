@@ -10,7 +10,11 @@
 </head>
 <body>
 <div layout:fragment="content" class="content">
-  <h1 class="board-top">게시판</h1>
+  <div class="board-header">
+    <button class="board-header-register">
+      <a th:href="@{/board/register}">작성하기</a>
+    </button>
+    <h1 class="board-header-title">게시판</h1></div>
   <div class="board-container">
     <div class="board-left">
       <div class="board-user">

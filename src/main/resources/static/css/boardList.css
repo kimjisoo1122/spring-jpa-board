@@ -3,8 +3,26 @@
   margin: 50px auto 0;
 }
 
-.board-top {
+.board-header {
   margin-bottom: 20px;
+  position: relative;
+}
+
+.board-header-register {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  padding: 5px;
+  background-color: lightskyblue;
+  border-radius: 7px;
+  border: none;
+}
+.board-header-register a {
+  text-decoration: none;
+  color: white;
+}
+
+.board-header-title {
   font-size: 25px;
   text-align: center;
 }

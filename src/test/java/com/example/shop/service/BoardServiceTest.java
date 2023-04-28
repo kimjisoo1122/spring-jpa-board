@@ -34,7 +34,7 @@ class BoardServiceTest {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setName("김지수");
         memberDTO.setPassword("test1234");
-        memberDTO.setEmail("test@test.com");
+        memberDTO.setEmail("test1234@test.com");
         memberDTO.setPhone("010-4953-3653");
         Long memberId = memberService.join(memberDTO);
 

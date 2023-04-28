@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+  layout:decorate="~{layout/layout.html}">
+<head>
+  <title layout:fragment="title">BoardForm</title>
+  <link layout:fragment="css" rel="stylesheet" th:href="@{/css/boardForm.css}">
+</head>
+<body>
+<div layout:fragment="content" class="content">
+  <div class="boardform-container">
+    <h1 class="boardForm-title">작성하기</h1>
+    <form
+      class="boardForm"
+      th:action="@{/board/register}"
+      th:method="post"
+      th:object="${boardDTO}">
+      <label th:for="title"></label>
+      <input
+        type="text"
+        class="error"
+        th:field="*{title}"
+        placeholder="제목을 입력해주세요.">
+      <span class="boardform-error-title" th:errors="*{title}"></span>
+      <label th:for="category"></label>
+      <select th:field="*{categoryName}">
+        <option value="" selected>카테고리를 선택해주세요.</option>
+        <option value="질문">질문</option>
+        <option value="공유">공유</option>
+        <option value="잡담">잡담</option>
+      </select>
+      <span class="boardform-error-category" th:errors="*{categoryName}"></span>
+      <label th:for="content"></label>
+      <textarea
+        th:field="*{content}"
+        placeholder="내용을 입력해주세요."></textarea>
+      <span class="boardform-error-content" th:errors="*{content}"></span>
+      <div class="boardform-button-container">
+        <button
+          type="button"
+          class="boardform-cancelbtn">취소
+        </button>
+        <button
+          type="submit"
+          class="boardform-regBtn">등록
+        </button>
+      </div>
+    </form>
+  </div>
+  <script>
+		const textAreaElement = document.querySelector('textarea');
+		textAreaElement.addEventListener('input', () => {
+			textAreaElement.style.height = 'auto';
+			textAreaElement.style.height = `${textAreaElement.scrollHeight}px`;
+		})
+  </script>
+</div>
+
+</body>
+</html>
