@@ -32,6 +32,7 @@
         th:field="*{password}"
         placeholder="비밀번호를 입력해주세요.">
       <span class="signform-error-password"></span>
+      <span class="signform-error-password" th:errors="*{password}"></span>
       <label th:for="name"></label>
       <input
         type="text"

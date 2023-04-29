@@ -58,6 +58,11 @@ table {
   margin: 0 auto;
 }
 
+.content {
+  width: 800px;
+  margin: 50px auto;
+}
+
 span[class*=error] {
   color: red;
   font-size: 10px;

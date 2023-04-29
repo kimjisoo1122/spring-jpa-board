@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class BoardDTO extends BaseDTO {
@@ -19,8 +21,12 @@ public class BoardDTO extends BaseDTO {
     private String content;
     @NotBlank(message = "카테고리를 선택해주세요.")
     private String categoryName;
+    private String categoryParentName;
     private int viewCnt;
     private int recommendCnt;
+
+    private List<ReplyDTO> replies;
+    private int replyCnt;
 
     public BoardDTO(Long id,Long memberId, String name, LocalDateTime writeTime, String title, String content, String categoryName, int viewCnt, int recommendCnt) {
         this.id = id;

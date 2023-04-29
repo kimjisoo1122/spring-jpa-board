@@ -1,0 +1,95 @@
+.board-header {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  padding: 15px 10px;
+  border-bottom: 1px solid #eee;
+}
+.board-header .board-header-subcategory {
+  color: lightskyblue;
+}
+
+.board-user {
+  margin-bottom: 20px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 16px;
+}
+.board-user .board-user-name {
+  flex-basis: 100%;
+  margin-bottom: 5px;
+  color: black;
+}
+.board-user .board-user-createDate, .board-user .board-user-viewCnt {
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+.board-title {
+  padding: 10px;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.board-content {
+  padding: 10px;
+  line-height: normal;
+}
+
+.board-recommend {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.board-recommend button {
+  background: white;
+  border: none;
+  width: 20px;
+  cursor: pointer;
+  color: lightgray;
+}
+.board-recommend button:first-of-type {
+  transform: rotate(-90deg) scaley(2) scale(1.5);
+  margin-right: 10px;
+}
+.board-recommend button:last-of-type {
+  margin-left: 10px;
+  transform: rotate(-90deg) scaley(2) scale(1.5);
+}
+
+.board-reply-cnt {
+  padding: 15px 10px 20px 10px;
+  font-size: 14px;
+}
+
+.board-reply-register-container {
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  height: 100px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.board-reply-register-container .board-reply-register-text {
+  resize: none;
+  height: 100px;
+  margin-bottom: 10px;
+  padding: 10px 20px;
+}
+.board-reply-register-container .board-reply-register-btn {
+  align-self: flex-end;
+  width: 80px;
+  color: white;
+  background-color: lightskyblue;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=board.css.map */

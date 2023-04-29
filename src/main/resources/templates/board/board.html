@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+  layout:decorate="~{layout/layout.html}">
+<head>
+  <title layout:fragment="title">Board</title>
+  <link layout:fragment="css" rel="stylesheet" th:href="@{/css/board.css}">
+</head>
+<body>
+<div layout:fragment="content" class="content">
+  <div class="board-header">
+    <p th:text="${boardDTO.categoryParentName}"></p>
+    <p> / </p>
+    <p th:text="${boardDTO.categoryName}" class="board-header-subcategory"></p>
+  </div>
+  <div class="board-user">
+    <p
+      class="board-user-name"
+      th:text="${boardDTO.name}"></p>
+    <p
+      class="board-user-createDate"
+      th:text="${#temporals.format(boardDTO.createDate, 'yyyy-MM-dd')}"
+      th:data-createDate="${boardDTO.createDate}"></p>
+    <p
+      class="board-user-viewCnt"
+      th:text="'조회수 : ' +  ${boardDTO.viewCnt}"></p>
+  </div>
+  <div class="board-title">
+    <h1 th:text="${boardDTO.title}"></h1>
+  </div>
+  <div class="board-content">
+    <p th:text="${boardDTO.content}"></p>
+  </div>
+  <div class="board-recommend">
+    <button>&lt;</button>
+    <p th:text="${boardDTO.recommendCnt}"></p>
+    <button>&gt;</button>
+  </div>
+  <div class="board-reply-cnt">
+    <p th:text="${boardDTO.replyCnt} + '개의 댓글'"></p>
+  </div>
+  <div class="board-reply-register-container">
+    <textarea
+      class="board-reply-register-text"
+      placeholder="댓글을 작성해주세요."></textarea>
+    <button
+      type="submit"
+      class="board-reply-register-btn">댓글 쓰기</button>
+  </div>
+  <div class="board-reply-container">리플들</div>
+  <script>
+		const now = new Date();
+		const createDateElement = document.querySelector('.board-user-createDate');
+		const createDate = new Date(createDateElement.getAttribute('data-createDate'));
+		const diff = now - createDate;
+		const diffMinutes = Math.floor(diff / (1000 * 60));
+		let diffMessage = ''
+		if (diffMinutes < 60) {
+			diffMessage = diffMinutes + '분 전';
+		} else if (diffMinutes < 60 * 24) {
+			diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
+		} else {
+			diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
+		}
+		createDateElement.innerHTML = createDateElement.innerHTML + '  ' + diffMessage;
+  </script>
+</div>
+</body>
+</html>

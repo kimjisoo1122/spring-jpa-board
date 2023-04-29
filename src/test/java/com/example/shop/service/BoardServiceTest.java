@@ -3,13 +3,17 @@ package com.example.shop.service;
 import com.example.shop.dto.BoardDTO;
 import com.example.shop.dto.MemberDTO;
 import com.example.shop.entity.Board;
+import com.example.shop.entity.BoardViewHistory;
 import com.example.shop.entity.Category;
 import com.example.shop.entity.Member;
+import com.example.shop.repository.BoardViewHistoryRepository;
+import com.example.shop.test.TestDataUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-//@Transactional
+@Transactional
 class BoardServiceTest {
 
     @Autowired
@@ -27,23 +31,21 @@ class BoardServiceTest {
     MemberService memberService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    BoardViewHistoryRepository boardViewHistoryRepository;
 
     @Test
     void 글등록() throws Exception {
-        //given
-        MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setName("김지수");
-        memberDTO.setPassword("test1234");
-        memberDTO.setEmail("test1234@test.com");
-        memberDTO.setPhone("010-4953-3653");
-        Long memberId = memberService.join(memberDTO);
-
+        // given
+        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
+        // when
+        Long memberId = memberService.join(testMemberDTO);
         Member member = memberService.findById(memberId).orElse(null);
+        // then
         assertNotNull(member);
 
         // given
         Category parentCategory = new Category("parentCategory");
-
         // when
         categoryService.save(parentCategory, null);
         // then
@@ -56,32 +58,46 @@ class BoardServiceTest {
         // given
         Long parentCategoryId = parentCategory.getId();
         Category category1 = new Category("category1");
-        Category category2 = new Category("category2");
-        Category category3 = new Category("category3");
-
         // when
         categoryService.save(category1, parentCategoryId);
-        categoryService.save(category2, parentCategoryId);
-        categoryService.save(category3, parentCategoryId);
-
         Category findCategory = categoryService.findByName(category1.getName()).orElse(null);
+        // then
         assertNotNull(findCategory);
 
-        BoardDTO boardDTO = new BoardDTO();
-        boardDTO.setContent("test");
-        boardDTO.setTitle("test");
-        boardDTO.setMemberId(member.getId());
-        boardDTO.setCategoryName(category1.getName());
+        // given
+        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
+        testBoardDTO.setMemberId(member.getId());
 
-        //when
-        Long boardId = boardService.register(boardDTO);
+        // when
+        Long boardId = boardService.register(testBoardDTO);
         Board findBoard = boardService.findById(boardId).orElse(null);
 
-        //then
+        // then
         assertNotNull(findBoard);
-        assertEquals(findBoard.getTitle(), boardDTO.getTitle());
+        assertEquals(findBoard.getTitle(), testBoardDTO.getTitle());
+        List<BoardDTO> boardList = boardService.findBoardList(0, 1);
+    }
 
-        List<BoardDTO> boardList = boardService.getBoardList(0, 1);
-        System.out.println("boardList = " + boardList);
+    @Test
+    void 조회수_증가() throws Exception {
+        //given
+        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
+        Long memberId = memberService.join(testMemberDTO);
+        Member member = memberService.findById(memberId).orElse(null);
+        assertNotNull(member);
+
+        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
+        testBoardDTO.setMemberId(member.getId());
+        Long boardId = boardService.register(testBoardDTO);
+        Board board = boardService.findById(boardId).orElse(null);
+        assertNotNull(board);
+
+        //when
+        boardService.increaseViewCnt(boardId, memberId);
+        BoardViewHistory boardViewHistory = boardViewHistoryRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+
+        //then
+        assertEquals(1, board.getViewCnt());
+        assertNotNull(boardViewHistory);
     }
 }

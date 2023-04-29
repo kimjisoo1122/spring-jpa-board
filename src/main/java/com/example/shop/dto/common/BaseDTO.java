@@ -1,7 +1,11 @@
 package com.example.shop.dto.common;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+@Setter
+@Getter
 public abstract class BaseDTO  {
     public LocalDateTime createDate;
     public LocalDateTime updateDate;
