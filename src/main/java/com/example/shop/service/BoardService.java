@@ -1,12 +1,10 @@
 package com.example.shop.service;
 
 import com.example.shop.dto.BoardDTO;
-import com.example.shop.entity.Board;
-import com.example.shop.entity.BoardViewHistory;
-import com.example.shop.entity.Category;
-import com.example.shop.entity.Member;
+import com.example.shop.entity.*;
+import com.example.shop.repository.BoardRecommendRepository;
 import com.example.shop.repository.BoardRepository;
-import com.example.shop.repository.BoardViewHistoryRepository;
+import com.example.shop.repository.BoardViewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberService memberService;
     private final CategoryService categoryService;
-    private final BoardViewHistoryRepository boardViewHistoryRepository;
+    private final BoardViewRepository boardViewRepository;
+    private final BoardRecommendRepository boardRecommendRepository;
 
     public Optional<Board> findById(Long boardId) {
         return boardRepository.findById(boardId);
@@ -57,27 +56,89 @@ public class BoardService {
         boardRepository.save(board);
         return board.getId();
     }
+
     public List<BoardDTO> findBoardList(int offset, int limit) {
         return boardRepository.findBoardList(offset, limit);
     }
 
-    public void increaseViewCnt(Long boardId, Long memberId) {
+    public void increaseViewCnt(Long memberId, Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
 
         // 조회 이력 있는 경우 중복조회하지 않는다.
-        if (isAlreadyViewed(boardId, memberId)) {
+        if (isAlreadyViewed(memberId, boardId)) {
             return;
         }
-
         BoardViewHistory boardViewHistory = new BoardViewHistory(board, member);
-        boardViewHistoryRepository.save(boardViewHistory);
+        boardViewRepository.save(boardViewHistory);
 
         board.increaseViewCnt();
     }
-    private boolean isAlreadyViewed(Long boardId, Long memberId) {
-        return boardViewHistoryRepository.findByMemberIdAndBoardId(memberId, boardId).isPresent();
+
+    private boolean isAlreadyViewed(Long memberId, Long boardId) {
+        return boardViewRepository.findByMemberIdAndBoardId(memberId, boardId).isPresent();
+    }
+
+    public void addRecommendation(Long memberId, Long boardId) {
+        Member member = memberService.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
+
+        BoardRecommendHistory boardRecommendHistory =
+                boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+
+        if (boardRecommendHistory == null) {
+            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.UPVOTED));
+            board.addRecommendation(1);
+            return;
+        }
+        switch (boardRecommendHistory.getStatus()) {
+            case NOT_VOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
+                board.addRecommendation(1);
+                break;
+            case UPVOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
+                board.removeRecommendation(1);
+                break;
+            case DOWNVOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
+                board.addRecommendation(2);
+                break;
+        }
+    }
+
+    public void removeRecommendation(Long memberId, Long boardId) {
+        Member member = memberService.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
+
+        BoardRecommendHistory boardRecommendHistory =
+                boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+
+        if (boardRecommendHistory == null) {
+            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.DOWNVOTED));
+            board.removeRecommendation(1);
+            return;
+        }
+
+        switch (boardRecommendHistory.getStatus()) {
+            case NOT_VOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
+                board.removeRecommendation(1);
+                break;
+            case UPVOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
+                board.removeRecommendation(2);
+                break;
+            case DOWNVOTED:
+                boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
+                board.addRecommendation(1);
+                break;
+        }
     }
 }

@@ -48,4 +48,11 @@ public class Board extends BaseEntity {
     public void increaseViewCnt() {
         this.viewCnt++;
     }
+    public void addRecommendation(int cnt) {
+        this.recommendCnt += cnt;
+    }
+
+    public void removeRecommendation(int cnt) {
+        this.recommendCnt -= cnt;
+    }
 }

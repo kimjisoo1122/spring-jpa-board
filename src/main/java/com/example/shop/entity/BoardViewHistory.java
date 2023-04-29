@@ -30,7 +30,13 @@ public class BoardViewHistory extends BaseEntity {
     private Member member;
 
     @CreatedDate
-    private LocalDateTime viewedAt;
+    private LocalDateTime viewDate;
+
+    @Transient
+    @Override
+    public LocalDateTime getCreateDate() {
+        return null;
+    }
 
     public BoardViewHistory(Board board, Member member) {
         this.board = board;

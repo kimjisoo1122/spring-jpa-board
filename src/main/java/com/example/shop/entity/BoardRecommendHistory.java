@@ -29,6 +29,24 @@ public class BoardRecommendHistory extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Enumerated(EnumType.STRING)
+    private RecommendationStatus status;
+
     @CreatedDate
-    private LocalDateTime recommendAt;
+    private LocalDateTime recommendDate;
+
+    @Transient
+    @Override
+    public LocalDateTime getCreateDate() {
+        return null;
+    }
+    public BoardRecommendHistory(Board board, Member member, RecommendationStatus status) {
+        this.board = board;
+        this.member = member;
+        this.status = status;
+    }
+
+    public void updateStauts(RecommendationStatus status) {
+        this.status = status;
+    }
 }

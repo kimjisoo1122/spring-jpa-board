@@ -11,7 +11,7 @@
 
 .board-header-register {
   position: absolute;
-  left: 5px;
+  left: 2px;
   top: 5px;
   padding: 5px;
   background-color: lightskyblue;
@@ -67,11 +67,11 @@
 }
 
 .board-right {
-  width: 150px;
+  width: 200px;
   font-size: 12px;
   text-align: right;
   position: absolute;
-  bottom: 15px;
+  bottom: 10px;
   right: 20px;
 }
 .board-right span {

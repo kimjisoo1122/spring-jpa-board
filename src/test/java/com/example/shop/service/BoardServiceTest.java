@@ -2,11 +2,9 @@ package com.example.shop.service;
 
 import com.example.shop.dto.BoardDTO;
 import com.example.shop.dto.MemberDTO;
-import com.example.shop.entity.Board;
-import com.example.shop.entity.BoardViewHistory;
-import com.example.shop.entity.Category;
-import com.example.shop.entity.Member;
-import com.example.shop.repository.BoardViewHistoryRepository;
+import com.example.shop.entity.*;
+import com.example.shop.repository.BoardRecommendRepository;
+import com.example.shop.repository.BoardViewRepository;
 import com.example.shop.test.TestDataUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +30,9 @@ class BoardServiceTest {
     @Autowired
     CategoryService categoryService;
     @Autowired
-    BoardViewHistoryRepository boardViewHistoryRepository;
+    BoardViewRepository boardViewRepository;
+    @Autowired
+    BoardRecommendRepository boardRecommendRepository;
 
     @Test
     void 글등록() throws Exception {
@@ -93,11 +93,40 @@ class BoardServiceTest {
         assertNotNull(board);
 
         //when
-        boardService.increaseViewCnt(boardId, memberId);
-        BoardViewHistory boardViewHistory = boardViewHistoryRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+        boardService.increaseViewCnt(memberId, boardId);
+        BoardViewHistory boardViewHistory = boardViewRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
 
         //then
         assertEquals(1, board.getViewCnt());
         assertNotNull(boardViewHistory);
+    }
+
+    @Test
+    void 추천수() throws Exception {
+        // given
+        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
+        Long memberId = memberService.join(testMemberDTO);
+        Member member = memberService.findById(memberId).orElse(null);
+        assertNotNull(member);
+
+        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
+        testBoardDTO.setMemberId(member.getId());
+        Long boardId = boardService.register(testBoardDTO);
+        Board board = boardService.findById(boardId).orElse(null);
+        assertNotNull(board);
+        // when
+        boardService.addRecommendation(memberId, boardId);
+        BoardRecommendHistory boardRecommendHistory = boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+        // then
+        assertEquals(1, board.getRecommendCnt());
+        assertNotNull(boardRecommendHistory);
+        assertEquals(RecommendationStatus.UPVOTED, boardRecommendHistory.getStatus());
+
+        // 감소 테스트
+        // when
+        boardService.removeRecommendation(memberId, boardId);
+        // then
+        assertEquals(-1, board.getRecommendCnt());
+        assertEquals(RecommendationStatus.DOWNVOTED, boardRecommendHistory.getStatus());
     }
 }

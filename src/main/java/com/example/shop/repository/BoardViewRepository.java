@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class BoardViewHistoryRepository {
+public class BoardViewRepository {
 
     private final EntityManager em;
 
@@ -20,10 +20,10 @@ public class BoardViewHistoryRepository {
 
     public Optional<BoardViewHistory> findByMemberIdAndBoardId(Long memberId, Long boardId) {
         String jpql =
-                "select bw " +
-                "from BoardViewHistory bw " +
-                "join bw.member m " +
-                "join bw.board b " +
+                "select bv " +
+                "from BoardViewHistory bv " +
+                "join bv.member m " +
+                "join bv.board b " +
                 "where m.id = :memberId " +
                 "and b.id = :boardId";
         List<BoardViewHistory> boardViewHistories = em.createQuery(jpql, BoardViewHistory.class)

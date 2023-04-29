@@ -53,11 +53,15 @@
   cursor: pointer;
   color: lightgray;
 }
-.board-recommend button:first-of-type {
+.board-recommend .board-recommend-remove {
   transform: rotate(-90deg) scaley(2) scale(1.5);
   margin-right: 10px;
 }
-.board-recommend button:last-of-type {
+.board-recommend .board-recommend-cnt {
+  width: 30px;
+  text-align: center;
+}
+.board-recommend .board-recommend-add {
   margin-left: 10px;
   transform: rotate(-90deg) scaley(2) scale(1.5);
 }

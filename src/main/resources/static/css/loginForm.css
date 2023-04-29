@@ -1,15 +1,11 @@
 .loginform-container {
-  width: 1200px;
-  height: 500px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 50px;
 }
 
 .loginform {
-  width: 500px;
-  height: 200px;
   padding: 20px;
   display: flex;
   flex-direction: column;

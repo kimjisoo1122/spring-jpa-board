@@ -35,9 +35,9 @@
     <p th:text="${boardDTO.content}"></p>
   </div>
   <div class="board-recommend">
-    <button>&lt;</button>
-    <p th:text="${boardDTO.recommendCnt}"></p>
-    <button>&gt;</button>
+    <button class="board-recommend-remove" onclick="removeRecommendation()">&lt;</button>
+    <p class="board-recommend-cnt" th:text="${boardDTO.recommendCnt}"></p>
+    <button class="board-recommend-add" onclick="addRecommendation()">&gt;</button>
   </div>
   <div class="board-reply-cnt">
     <p th:text="${boardDTO.replyCnt} + '개의 댓글'"></p>
@@ -51,7 +51,9 @@
       class="board-reply-register-btn">댓글 쓰기</button>
   </div>
   <div class="board-reply-container">리플들</div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
+
 		const now = new Date();
 		const createDateElement = document.querySelector('.board-user-createDate');
 		const createDate = new Date(createDateElement.getAttribute('data-createDate'));
@@ -66,6 +68,26 @@
 			diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
 		}
 		createDateElement.innerHTML = createDateElement.innerHTML + '  ' + diffMessage;
+		function removeRecommendation() {
+			console.log('remove');
+			axios.post('/board/recommend/remove/[[${boardDTO.id}]]')
+          .then(res => {
+	          document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
+          })
+          .catch(err => {
+	          console.log(err);
+          })
+		}
+		function addRecommendation() {
+			console.log('add');
+			axios.post('/board/recommend/add/[[${boardDTO.id}]]')
+					.then(res => {
+						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
+					})
+					.catch(err => {
+						console.log(err);
+					});
+		}
   </script>
 </div>
 </body>
