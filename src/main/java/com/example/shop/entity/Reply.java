@@ -32,7 +32,4 @@ public class Reply extends BaseEntity {
         this.board = board;
         this.member = member;
     }
-    public void updateContent(String content) {
-        this.content = content;
-    }
 }

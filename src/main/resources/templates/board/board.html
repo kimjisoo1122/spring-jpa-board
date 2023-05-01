@@ -26,7 +26,7 @@
       th:data-createDate="${boardDTO.createDate}"></p>
     <p
       class="board-user-viewCnt"
-      th:text="'조회수 : ' +  ${boardDTO.viewCnt}"></p>
+      th:text="'조회수 ' +  ${boardDTO.viewCnt}"></p>
   </div>
   <div class="board-title">
     <h1 th:text="${boardDTO.title}"></h1>
@@ -48,38 +48,92 @@
       placeholder="댓글을 작성해주세요."></textarea>
     <button
       type="submit"
-      class="board-reply-register-btn">댓글 쓰기</button>
+      class="board-reply-register-btn"
+      onclick="registerReply()">댓글 쓰기
+    </button>
   </div>
-  <div class="board-reply-container">리플들</div>
+
+  <div class="board-reply-container">
+    <div class="board-reply">
+      <div class="board-reply-header">
+        <div class="board-reply-user">
+          <div class="board-reply-name"></div>
+          <div class="board-reply-date"></div>
+        </div>
+        <div class="board-reply-recommend">
+          <button class="board-reply-recommend-remove">&lt;</button>
+          <p class="board-reply-recommend-cnt">0</p>
+          <button class="board-reply-recommend-add">&gt;</button>
+        </div>
+      </div>
+      <div class="board-reply-content"></div>
+    </div>
+  </div>
+
+
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
+		(function () {
+			createFormatDate(document.querySelector('.board-user-createDate'), 'data-createDate')
+			getReplies();
+		}());
 
-		const now = new Date();
-		const createDateElement = document.querySelector('.board-user-createDate');
-		const createDate = new Date(createDateElement.getAttribute('data-createDate'));
-		const diff = now - createDate;
-		const diffMinutes = Math.floor(diff / (1000 * 60));
-		let diffMessage = ''
-		if (diffMinutes < 60) {
-			diffMessage = diffMinutes + '분 전';
-		} else if (diffMinutes < 60 * 24) {
-			diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
-		} else {
-			diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
+		function createFormatDate(element, attributeName) {
+			const now = new Date();
+			const createDateElement = element
+			const diff = now - new Date(createDateElement.getAttribute(attributeName));
+			const diffMinutes = Math.floor(diff / (1000 * 60));
+			let diffMessage = ''
+			if (diffMinutes < 60) {
+				diffMessage = diffMinutes + '분 전';
+			} else if (diffMinutes < 60 * 24) {
+				diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
+			} else {
+				diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
+			}
+			createDateElement.innerHTML = createDateElement.innerHTML + '  ' + diffMessage;
 		}
-		createDateElement.innerHTML = createDateElement.innerHTML + '  ' + diffMessage;
+
+		function getReplies() {
+			axios.get('/reply/[[${boardDTO.id}]]')
+					.then(res => {
+						const replies = res.data.map(reply => {
+							return `
+							 <div class="board-reply">
+                <div class="board-reply-header">
+                  <div class="board-reply-user">
+                    <div class="board-reply-name">${reply.memberName}</div>
+                    <div class="board-reply-date" data-reply-date="${reply.createDate}"></div>
+                  </div>
+                  <div class="board-reply-recommend">
+                    <button class="board-reply-recommend-remove">&lt;</button>
+                    <p class="board-reply-recommend-cnt">0</p>
+                    <button class="board-reply-recommend-add">&gt;</button>
+                  </div>
+                </div>
+                <div class="board-reply-content">${reply.content}</div>
+              </div>
+							`
+						}).join('');
+						document.querySelector('.board-reply-container').innerHTML = replies;
+						document.querySelectorAll('.board-reply-date').forEach(e => createFormatDate(e, 'data-reply-date'))
+					})
+					.catch(err => {
+						console.log(err);
+					});
+		}
+
 		function removeRecommendation() {
-			console.log('remove');
 			axios.post('/board/recommend/remove/[[${boardDTO.id}]]')
-          .then(res => {
-	          document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
-          })
-          .catch(err => {
-	          console.log(err);
-          })
+					.then(res => {
+						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
+					})
+					.catch(err => {
+						console.log(err);
+					})
 		}
+
 		function addRecommendation() {
-			console.log('add');
 			axios.post('/board/recommend/add/[[${boardDTO.id}]]')
 					.then(res => {
 						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
@@ -87,6 +141,21 @@
 					.catch(err => {
 						console.log(err);
 					});
+		}
+
+		function registerReply() {
+			const replyDTO = {
+				boardId: '[[${boardDTO.id}]]',
+        content: document.querySelector('.board-reply-register-text').value
+      }
+			axios.post('/reply/', replyDTO)
+					.then(res => {
+						getReplies();
+						document.querySelector('.board-reply-register-text').value = '';
+					})
+					.catch(err => {
+						console.log(err)
+					})
 		}
   </script>
 </div>

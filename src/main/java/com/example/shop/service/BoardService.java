@@ -53,6 +53,11 @@ public class BoardService {
                 .orElseThrow(() -> new IllegalArgumentException("카테고리가 조회되지 않습니다."));
 
         Board board = Board.createBoard(boardDTO, member, category);
+        if (boardDTO.getId() != null) {
+            Board parentBoard = this.findById(boardDTO.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
+            board.setParent(parentBoard);
+        }
         boardRepository.save(board);
         return board.getId();
     }
@@ -95,6 +100,7 @@ public class BoardService {
             board.addRecommendation(1);
             return;
         }
+
         switch (boardRecommendHistory.getStatus()) {
             case NOT_VOTED:
                 boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
@@ -104,10 +110,10 @@ public class BoardService {
                 boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
                 board.removeRecommendation(1);
                 break;
-            case DOWNVOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
-                board.addRecommendation(2);
-                break;
+//            case DOWNVOTED:
+//                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
+//                board.addRecommendation(2);
+//                break;
         }
     }
 
@@ -131,14 +137,14 @@ public class BoardService {
                 boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
                 board.removeRecommendation(1);
                 break;
-            case UPVOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
-                board.removeRecommendation(2);
-                break;
             case DOWNVOTED:
                 boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
                 board.addRecommendation(1);
                 break;
+//            case UPVOTED:
+//                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
+//                board.removeRecommendation(2);
+//                break;
         }
     }
 }

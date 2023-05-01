@@ -35,9 +35,9 @@
       </div>
     </div>
     <div class="board-right">
-      <span th:text="'조회수 : ' + ${board.viewCnt}">조회수</span>
-      <span>댓글 : 0</span>
-      <span th:text="'추천수 : ' + ${board.recommendCnt}">추천수</span>
+      <span th:text="'조회수 ' + ${board.viewCnt}">조회수</span>
+      <span>댓글 0</span>
+      <span th:text="'추천수 ' + ${board.recommendCnt}">추천수</span>
     </div>
   </div>
   <script>
@@ -62,7 +62,6 @@
 			e.innerHTML = e.innerHTML + '  ' + diffMessage;
 		})
   </script>
-
 </div>
 </body>
 </html>

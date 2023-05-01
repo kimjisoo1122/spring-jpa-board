@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,6 +30,10 @@ public class ReplyService {
         Reply reply = new Reply(replyDTO.getContent(), board, member);
         replyRepository.save(reply);
         return reply.getId();
+    }
+
+    public Optional<Reply> findById(Long replyId) {
+        return replyRepository.findById(replyId);
     }
     public List<ReplyDTO> findFromBoardId(Long boardId) {
         return replyRepository.findByBoardId(boardId);

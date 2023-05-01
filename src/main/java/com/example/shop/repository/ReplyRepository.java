@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,6 +17,10 @@ public class ReplyRepository {
 
     public void save(Reply reply) {
         em.persist(reply);
+    }
+
+    public Optional<Reply> findById(Long replyId) {
+        return Optional.ofNullable(em.find(Reply.class, replyId));
     }
 
     public List<ReplyDTO> findByBoardId(Long boardId) {

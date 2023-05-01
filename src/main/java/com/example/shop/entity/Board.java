@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,6 +33,14 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Board parent;
+
+    @OneToMany(mappedBy = "board")
+    private List<Reply> replies = new ArrayList<>();
+
+    private int boardLevel;
     private int viewCnt;
     private int recommendCnt;
 
@@ -42,7 +52,12 @@ public class Board extends BaseEntity {
         board.category = category;
         board.viewCnt = 0;
         board.recommendCnt = 0;
+        board.boardLevel = 1;
         return board;
+    }
+    public void setParent(Board board) {
+        this.parent = board;
+        this.boardLevel = board.getBoardLevel() + 1;
     }
 
     public void increaseViewCnt() {

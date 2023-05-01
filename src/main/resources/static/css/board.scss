@@ -48,6 +48,7 @@
   padding-bottom: 20px;
   margin-bottom: 10px;
   border-bottom: 1px solid #eee;
+
   button {
     background: white;
     border: none;
@@ -60,10 +61,12 @@
     transform: rotate(-90deg) scaley(2) scale(1.5);
     margin-right: 10px;
   }
+
   .board-recommend-cnt {
     width: 30px;
     text-align: center;
   }
+
   .board-recommend-add {
     margin-left: 10px;
     transform: rotate(-90deg) scaley(2) scale(1.5);
@@ -103,6 +106,49 @@
   }
 }
 
-.board-reply-container {
+.board-reply {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
 
+.board-reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.board-reply-name {
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.board-reply-date {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.board-reply-recommend {
+  display: flex;
+  gap: 5px;
+  margin-right: 5px;
+
+  button {
+    background: white;
+    border: none;
+    width: 20px;
+    cursor: pointer;
+    color: lightgray;
+    transform: rotate(-90deg) scaleY(1.5);
+  }
+
+  .board-reply-recommend-cnt {
+    width: 20px;
+    text-align: center;
+  }
+}
+
+.board-reply-content {
+  padding: 10px;
+  font-size: 15px;
 }
