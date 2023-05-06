@@ -2,6 +2,7 @@ package com.example.shop.service;
 
 import com.example.shop.dto.MemberDTO;
 import com.example.shop.entity.Member;
+import com.example.shop.test.TestDataUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,12 @@ class MemberServiceTest {
     @Test
     void 회원가입() throws Exception {
         //given
-        MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setName("김지수");
-        memberDTO.setPassword("test1234");
-        memberDTO.setEmail("test@test.com");
-        memberDTO.setPhone("010-4953-3653");
+        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
         //when
-        Long memberId = memberService.join(memberDTO);
+        Long memberId = memberService.join(testMemberDTO);
         Member member = memberService.findById(memberId).orElse(null);
         //then
         assertNotNull(member);
-        assertEquals(member.getName(), memberDTO.getName());
+        assertEquals(member.getName(), testMemberDTO.getName());
     }
 }
