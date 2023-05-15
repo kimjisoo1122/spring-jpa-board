@@ -5,18 +5,16 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
-  <title layout:fragment="title"></title>
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1, user-scalable=yes,initial-scale=1.0" />
+  <th:block layout:fragment="title"></th:block>
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <th:block layout:fragment="css"/>
   <th:block layout:fragment="js"/>
 </head>
 <body>
-<div th:replace="~{fragments/header::header}"></div>
-
-<div layout:fragment="content" class="content-container"></div>
-
-<div th:replace="~{fragments/footer::footer}"></div>
-
-<script th:src="@{/js/layout.js}"></script>
+  <th:block th:replace="~{fragments/header::header}"></th:block>
+  <th:block layout:fragment="content" class="content-container"></th:block>
+  <th:block th:replace="~{fragments/footer::footer}"></th:block>
+  <script th:src="@{/js/layout.js}"></script>
 </body>
 </html>
