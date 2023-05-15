@@ -1,6 +1,6 @@
 package com.example.board.controller;
 
-import com.example.board.dto.MemberDTO;
+import com.example.board.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ public class LoginController {
 
     @GetMapping
     public String loginForm(
-            @ModelAttribute("memberDTO") MemberDTO memberDTO,
+            @ModelAttribute("memberDTO") MemberDto memberDTO,
             HttpSession session,
             Model model) {
         String loginErorr = "loginError";

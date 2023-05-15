@@ -1,6 +1,6 @@
 package com.example.board.repository;
 
-import com.example.board.dto.ReplyDTO;
+import com.example.board.dto.ReplyDto;
 import com.example.board.entity.Reply;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,17 +23,17 @@ public class ReplyRepository {
         return Optional.ofNullable(em.find(Reply.class, replyId));
     }
 
-    public List<ReplyDTO> findByBoardId(Long boardId) {
+    public List<ReplyDto> findByBoardId(Long boardId) {
         String jpql =
                 "select " +
-                "   new com.example.board.dto.ReplyDTO(" +
+                "   new com.example.board.dto.ReplyDto(" +
                         "r.id, r.content, b.id, m.id, m.name, r.createDate, r.updateDate)" +
                 "from Reply r " +
                 "join r.member m " +
                 "join r.board b " +
                 "where b.id = :boardId " +
                 "order by m.createDate desc";
-        return em.createQuery(jpql, ReplyDTO.class)
+        return em.createQuery(jpql, ReplyDto.class)
                 .setParameter("boardId", boardId)
                 .getResultList();
     }

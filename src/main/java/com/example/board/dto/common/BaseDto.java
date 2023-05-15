@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 @Setter
 @Getter
-public abstract class BaseDTO  {
+public abstract class BaseDto {
     public LocalDateTime createDate;
     public LocalDateTime updateDate;
 }

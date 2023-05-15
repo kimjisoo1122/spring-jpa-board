@@ -1,15 +1,17 @@
 package com.example.board.service;
 
-import com.example.board.dto.BoardDTO;
+import com.example.board.dto.board.BoardDto;
+import com.example.board.dto.board.BoardSearchCondition;
 import com.example.board.entity.*;
-import com.example.board.repository.BoardRecommendRepository;
-import com.example.board.repository.BoardRepository;
-import com.example.board.repository.BoardViewRepository;
+import com.example.board.repository.board.BoardRecommendRepository;
+import com.example.board.repository.board.BoardRepository;
+import com.example.board.repository.board.BoardViewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,43 +29,28 @@ public class BoardService {
         return boardRepository.findById(boardId);
     }
 
-    public BoardDTO findBoardDTOById(Long boardId) {
-        return this.findById(boardId)
-                .map(t -> {
-                    BoardDTO boardDTO = new BoardDTO();
-                    boardDTO.setId(t.getId());
-                    boardDTO.setMemberId(t.getMember().getId());
-                    boardDTO.setName(t.getMember().getName());
-                    boardDTO.setTitle(t.getTitle());
-                    boardDTO.setCategoryName(t.getCategory().getName());
-                    boardDTO.setCategoryParentName(t.getCategory().getParent().getName());
-                    boardDTO.setContent(t.getContent());
-                    boardDTO.setViewCnt(t.getViewCnt());
-                    boardDTO.setCreateDate(t.getCreateDate());
-                    boardDTO.setRecommendCnt(t.getRecommendCnt());
-                    return boardDTO;
-                })
+    public BoardDto findBoardDtoById(Long boardId) {
+        return boardRepository.findById(boardId)
+                .map(BoardDto::new)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
     }
 
-    public Long register(BoardDTO boardDTO) {
+    public Long register(BoardDto boardDTO) {
         Member member = memberService.findById(boardDTO.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
         Category category = categoryService.findByName(boardDTO.getCategoryName())
                 .orElseThrow(() -> new IllegalArgumentException("카테고리가 조회되지 않습니다."));
 
-        Board board = Board.createBoard(boardDTO, member, category);
-        if (boardDTO.getId() != null) {
-            Board parentBoard = this.findById(boardDTO.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
-            board.setParent(parentBoard);
-        }
+        Board board = Board.createBoard(boardDTO);
+        board.setMember(member);
+        board.setCategory(category);
         boardRepository.save(board);
         return board.getId();
     }
 
-    public List<BoardDTO> findBoardList(int offset, int limit) {
-        return boardRepository.findBoardList(offset, limit);
+    public Page<BoardDto> search(BoardSearchCondition boardSearchCondition, Pageable pageable) {
+        return boardRepository.search(boardSearchCondition, pageable)
+                .map(BoardDto::new);
     }
 
     public void increaseViewCnt(Long memberId, Long boardId) {
@@ -76,7 +63,7 @@ public class BoardService {
         if (isAlreadyViewed(memberId, boardId)) {
             return;
         }
-        BoardViewHistory boardViewHistory = new BoardViewHistory(board, member);
+        BoardViewHistory boardViewHistory = BoardViewHistory.createBoardViewHistory(board, member);
         boardViewRepository.save(boardViewHistory);
 
         board.increaseViewCnt();

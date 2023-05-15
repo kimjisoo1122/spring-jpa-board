@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class MemberDTO {
+public class MemberDto {
 
     @Length(min = 8)
     @NotBlank(message = "비밀번호를 입력해주세요.")

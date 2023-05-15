@@ -1,4 +1,4 @@
-package com.example.board.repository;
+package com.example.board.repository.board;
 
 import com.example.board.entity.BoardViewHistory;
 import lombok.RequiredArgsConstructor;

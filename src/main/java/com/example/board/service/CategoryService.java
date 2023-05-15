@@ -15,7 +15,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public void save(Category category, Long parentId) {
+    public Long save(Category category, Long parentId) {
         if (parentId != null) {
             this.findById(parentId)
                     .ifPresentOrElse(category::setParent,
@@ -24,6 +24,7 @@ public class CategoryService {
                             });
         }
         categoryRepository.save(category);
+        return category.getId();
     }
 
     public Optional<Category> findById(Long categoryId) {

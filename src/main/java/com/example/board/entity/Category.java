@@ -28,6 +28,10 @@ public class Category extends BaseEntity {
         this.name = name;
     }
 
+    public static Category createCategory(String categoryName) {
+        return new Category(categoryName);
+    }
+
     public void setParent(Category parent) {
         this.parent = parent;
     }

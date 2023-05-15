@@ -1,18 +1,12 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:8800/springjpaboard
-    username: springjpaboard
-    password: test1122
-
-
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-#        show_sql: true
+#        dialect: MySQL5Dialect
+  #        show_sql: true
 
   jwt:
     secret: board

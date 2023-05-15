@@ -1,6 +1,6 @@
 package com.example.board.controller;
 
-import com.example.board.dto.ReplyDTO;
+import com.example.board.dto.ReplyDto;
 import com.example.board.service.ReplyService;
 import com.example.board.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +16,13 @@ public class ReplyController {
     private final ReplyService replyService;
 
     @PostMapping
-    public void register(@RequestBody ReplyDTO replyDTO) {
+    public void register(@RequestBody ReplyDto replyDTO) {
         replyDTO.setMemberId(SecurityUtil.getMemberIdByAuthentication());
         replyService.register(replyDTO);
     }
 
     @GetMapping("{boardId}")
-    public List<ReplyDTO> getReplies(
+    public List<ReplyDto> getReplies(
             @PathVariable("boardId") Long boardId) {
         return replyService.findFromBoardId(boardId);
     }

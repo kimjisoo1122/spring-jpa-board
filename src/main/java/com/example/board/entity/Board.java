@@ -1,10 +1,11 @@
 package com.example.board.entity;
 
-import com.example.board.dto.BoardDTO;
+import com.example.board.dto.board.BoardDto;
 import com.example.board.entity.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@ToString(exclude = {"member", "category", "replies"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
 
@@ -33,9 +35,9 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Board parent;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "parent_id")
+//    private Board parent;
 
     @OneToMany(mappedBy = "board")
     private List<Reply> replies = new ArrayList<>();
@@ -44,20 +46,21 @@ public class Board extends BaseEntity {
     private int viewCnt;
     private int recommendCnt;
 
-    public static Board createBoard(BoardDTO boardDTO, Member member, Category category) {
+    public static Board createBoard(BoardDto boardDTO) {
         Board board = new Board();
         board.title = boardDTO.getTitle();
         board.content = boardDTO.getContent();
-        board.member = member;
-        board.category = category;
         board.viewCnt = 0;
         board.recommendCnt = 0;
-        board.boardLevel = 1;
         return board;
     }
-    public void setParent(Board board) {
-        this.parent = board;
-        this.boardLevel = board.getBoardLevel() + 1;
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void increaseViewCnt() {

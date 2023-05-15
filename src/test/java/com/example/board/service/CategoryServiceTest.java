@@ -2,14 +2,11 @@ package com.example.board.service;
 
 import com.example.board.entity.Category;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 class CategoryServiceTest {
 
@@ -17,7 +14,7 @@ class CategoryServiceTest {
     CategoryService categoryService;
 
     @Test
-    void 카테고리등록() {
+    void register() {
         // 테스트에서 진행하는 각각의 메소드는 개별 트랜잭션임. -> 서로 영속컨텍스트공유 X
         // given
         Category parentCategory = new Category("커뮤니티");

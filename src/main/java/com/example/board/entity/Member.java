@@ -1,6 +1,6 @@
 package com.example.board.entity;
 
-import com.example.board.dto.MemberDTO;
+import com.example.board.dto.MemberDto;
 import com.example.board.entity.common.Address;
 import com.example.board.entity.common.BaseEntity;
 import lombok.AccessLevel;
@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
     private UserRole userRole;
 
 
-    public static Member createMember(MemberDTO memberDTO) {
+    public static Member createMember(MemberDto memberDTO) {
         Member member = new Member();
         member.address = new Address(memberDTO.getCity(), memberDTO.getStreet(), memberDTO.getZipcode());
         member.name = memberDTO.getName();

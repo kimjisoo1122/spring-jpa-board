@@ -1,6 +1,6 @@
 package com.example.board.dto;
 
-import com.example.board.dto.common.BaseDTO;
+import com.example.board.dto.common.BaseDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class ReplyDTO extends BaseDTO {
+public class ReplyDto extends BaseDto {
 
     private Long id;
     private Long boardId;
@@ -16,7 +16,7 @@ public class ReplyDTO extends BaseDTO {
     private String content;
     private String memberName;
 
-    public ReplyDTO(Long id, String content, Long memberId, Long boardId, String memberName, LocalDateTime createDate, LocalDateTime updateDate) {
+    public ReplyDto(Long id, String content, Long memberId, Long boardId, String memberName, LocalDateTime createDate, LocalDateTime updateDate) {
         this.id = id;
         this.content = content;
         this.boardId = boardId;

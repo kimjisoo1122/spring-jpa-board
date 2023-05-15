@@ -1,6 +1,6 @@
 package com.example.board.service;
 
-import com.example.board.dto.MemberDTO;
+import com.example.board.dto.MemberDto;
 import com.example.board.entity.Member;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final HttpSession session;
 
-    public Long join(MemberDTO memberDTO) {
+    public Long join(MemberDto memberDTO) {
         // BCrypt 해쉬 암호화
         memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
         // 멤버 생성

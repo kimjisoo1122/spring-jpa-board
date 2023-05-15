@@ -1,8 +1,8 @@
 package com.example.board.service;
 
-import com.example.board.dto.MemberDTO;
+import com.example.board.dto.MemberDto;
 import com.example.board.entity.Member;
-import com.example.board.test.TestDataUtil;
+import com.example.board.TestDataUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ class MemberServiceTest {
     @Test
     void 회원가입() throws Exception {
         //given
-        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
+        MemberDto testMemberDto = TestDataUtil.getTestMemberDTO();
         //when
-        Long memberId = memberService.join(testMemberDTO);
+        Long memberId = memberService.join(testMemberDto);
         Member member = memberService.findById(memberId).orElse(null);
         //then
         assertNotNull(member);
-        assertEquals(member.getName(), testMemberDTO.getName());
+        assertEquals(member.getName(), testMemberDto.getName());
     }
 }

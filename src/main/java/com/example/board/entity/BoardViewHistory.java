@@ -38,10 +38,10 @@ public class BoardViewHistory extends BaseEntity {
         return null;
     }
 
-    public BoardViewHistory(Board board, Member member) {
-        this.board = board;
-        this.member = member;
+    public static BoardViewHistory createBoardViewHistory(Board board, Member member) {
+        BoardViewHistory boardViewHistory = new BoardViewHistory();
+        boardViewHistory.board = board;
+        boardViewHistory.member = member;
+        return boardViewHistory;
     }
-
-
 }

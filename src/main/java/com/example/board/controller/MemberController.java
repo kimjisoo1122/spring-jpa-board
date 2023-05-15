@@ -1,6 +1,6 @@
 package com.example.board.controller;
 
-import com.example.board.dto.MemberDTO;
+import com.example.board.dto.MemberDto;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -22,13 +22,13 @@ public class MemberController {
 
     @GetMapping("/sign")
     public String signForm(
-            @ModelAttribute("memberDTO") MemberDTO memberDTO) {
+            @ModelAttribute("memberDTO") MemberDto memberDTO) {
         return SIGN_FORM;
     }
     @PostMapping("/sign")
     public String sign(
             @ModelAttribute("memberDTO")
-            @Valid MemberDTO memberDTO,
+            @Valid MemberDto memberDTO,
             BindingResult bindingResult) {
 
 

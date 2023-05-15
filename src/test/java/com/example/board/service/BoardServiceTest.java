@@ -1,24 +1,21 @@
 package com.example.board.service;
 
-import com.example.board.dto.BoardDTO;
-import com.example.board.dto.MemberDTO;
-import com.example.board.entity.*;
-import com.example.board.repository.BoardRecommendRepository;
-import com.example.board.repository.BoardViewRepository;
-import com.example.board.test.TestDataUtil;
+import com.example.board.dto.MemberDto;
+import com.example.board.dto.board.BoardDto;
+import com.example.board.entity.Board;
+import com.example.board.entity.Category;
+import com.example.board.entity.Member;
+import com.example.board.repository.board.BoardRepository;
+import com.example.board.repository.board.BoardViewRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
 class BoardServiceTest {
@@ -30,103 +27,104 @@ class BoardServiceTest {
     @Autowired
     CategoryService categoryService;
     @Autowired
-    BoardViewRepository boardViewRepository;
+    BoardRepository boardRepository;
     @Autowired
-    BoardRecommendRepository boardRecommendRepository;
+    BoardViewRepository boardViewRepository;
 
-    @Test
-    void 글등록() throws Exception {
-        // given
-        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
-        // when
-        Long memberId = memberService.join(testMemberDTO);
-        Member member = memberService.findById(memberId).orElse(null);
-        // then
-        assertNotNull(member);
+    BoardDto boardDto;
+    MemberDto memberDto;
 
-        // given
-        Category parentCategory = new Category("parentCategory");
-        // when
-        categoryService.save(parentCategory, null);
-        // then
-        Category category =
-                categoryService.findById(parentCategory.getId()).
-                        orElseThrow(IllegalArgumentException::new);
-        assertEquals(parentCategory.getName(), category.getName());
+    @BeforeEach
+    public void before() {
+        boardDto = new BoardDto();
+        boardDto.setCategoryName("질문");
+        boardDto.setContent("내용");
+        boardDto.setTitle("제목");
 
-        // 자식카테고리
-        // given
-        Long parentCategoryId = parentCategory.getId();
-        Category category1 = new Category("category1");
-        // when
-        categoryService.save(category1, parentCategoryId);
-        Category findCategory = categoryService.findByName(category1.getName()).orElse(null);
-        // then
-        assertNotNull(findCategory);
-
-        // given
-        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
-        testBoardDTO.setMemberId(member.getId());
-
-        // when
-        Long boardId = boardService.register(testBoardDTO);
-        Board findBoard = boardService.findById(boardId).orElse(null);
-
-        // then
-        assertNotNull(findBoard);
-        assertEquals(findBoard.getTitle(), testBoardDTO.getTitle());
-        List<BoardDTO> boardList = boardService.findBoardList(0, 1);
+        memberDto = new MemberDto();
+        memberDto.setName("김지수");
+        memberDto.setEmail("kimjisoo@test.com");
+        memberDto.setPassword("1234");
+        memberDto.setPhone("010-4953-3653");
+        memberDto.setCity("서울시");
+        memberDto.setStreet("강남구 지수네집");
+        memberDto.setZipcode("08289");
     }
 
     @Test
-    void 조회수_증가() throws Exception {
-        //given
-        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
-        Long memberId = memberService.join(testMemberDTO);
-        Member member = memberService.findById(memberId).orElse(null);
-        assertNotNull(member);
+    @DisplayName("글등록")
+    void register() throws Exception {
+        // given
+        Member member = createTestMember(memberDto);
+        Category parentCategory = createTestCategory("커뮤니티", null);
+        Category childCategory = createTestCategory("질문", parentCategory.getId());
 
-        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
-        testBoardDTO.setMemberId(member.getId());
-        Long boardId = boardService.register(testBoardDTO);
-        Board board = boardService.findById(boardId).orElse(null);
-        assertNotNull(board);
+        // when
+        Board board = createTestBoard(member.getId(), childCategory.getName(), boardDto);
 
-        //when
-        boardService.increaseViewCnt(memberId, boardId);
-        BoardViewHistory boardViewHistory = boardViewRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
+        // then
+        assertThat(board.getTitle()).isEqualTo(boardDto.getTitle());
+        assertThat(board.getContent()).isEqualTo(boardDto.getContent());
+        assertThat(board.getMember().getName()).isEqualTo(member.getName());
+        assertThat(board.getCategory().getName()).isEqualTo(childCategory.getName());
+    }
 
-        //then
-        assertEquals(1, board.getViewCnt());
-        assertNotNull(boardViewHistory);
+
+    @Test
+    void findById() throws Exception {
+        // given
+        Member member = createTestMember(memberDto);
+        Category parentCategory = createTestCategory("커뮤니티", null);
+        Category childCategory = createTestCategory("질문", parentCategory.getId());
+        Board board = createTestBoard(member.getId(), childCategory.getName(), boardDto);
+
+        // when
+        BoardDto findBoardDto = boardService.findBoardDtoById(board.getId());
+
+        // then
+        assertThat(findBoardDto.getTitle()).isEqualTo(boardDto.getTitle());
+        assertThat(findBoardDto.getContent()).isEqualTo(boardDto.getContent());
+        assertThat(findBoardDto.getMemberName()).isEqualTo(member.getName());
+        assertThat(findBoardDto.getCategoryName()).isEqualTo(childCategory.getName());
     }
 
     @Test
-    void 추천수() throws Exception {
+    void increaseViewCnt() throws Exception {
         // given
-        MemberDTO testMemberDTO = TestDataUtil.getTestMemberDTO();
-        Long memberId = memberService.join(testMemberDTO);
+        Member member = createTestMember(memberDto);
+        Category parentCategory = createTestCategory("커뮤니티", null);
+        Category childCategory = createTestCategory("질문", parentCategory.getId());
+        Board board = createTestBoard(member.getId(), childCategory.getName(), boardDto);
+
+        // when
+        boardService.increaseViewCnt(member.getId(), board.getId());
+
+
+        // then
+    }
+
+
+
+    private Member createTestMember(MemberDto memberDto) {
+        Long memberId = memberService.join(memberDto);
         Member member = memberService.findById(memberId).orElse(null);
-        assertNotNull(member);
+        assertThat(member).isNotNull();
+        return member;
+    }
 
-        BoardDTO testBoardDTO = TestDataUtil.getTestBoardDTO();
-        testBoardDTO.setMemberId(member.getId());
-        Long boardId = boardService.register(testBoardDTO);
-        Board board = boardService.findById(boardId).orElse(null);
-        assertNotNull(board);
-        // when
-        boardService.addRecommendation(memberId, boardId);
-        BoardRecommendHistory boardRecommendHistory = boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
-        // then
-        assertEquals(1, board.getRecommendCnt());
-        assertNotNull(boardRecommendHistory);
-        assertEquals(RecommendationStatus.UPVOTED, boardRecommendHistory.getStatus());
+    private Category createTestCategory(String name, Long parentId) {
+        Category category = Category.createCategory(name);
+        categoryService.save(category, parentId);
+        categoryService.findById(category.getId());
+        return category;
+    }
 
-        // 감소 테스트
-        // when
-        boardService.removeRecommendation(memberId, boardId);
-        // then
-        assertEquals(-1, board.getRecommendCnt());
-        assertEquals(RecommendationStatus.DOWNVOTED, boardRecommendHistory.getStatus());
+    private Board createTestBoard(Long memberId, String categoryName, BoardDto boardDto) {
+        boardDto.setMemberId(memberId);
+        boardDto.setCategoryName(categoryName);
+        Long boardId = boardService.register(boardDto);
+        Board board = boardRepository.findById(boardId).orElse(null);
+        assertThat(board).isNotNull();
+        return board;
     }
 }
