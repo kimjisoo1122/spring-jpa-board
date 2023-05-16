@@ -34,7 +34,7 @@
   <div class="board-content">
     <p th:text="${boardDto.content}"></p>
   </div>
-  <div class="board-recommend">
+  <div class="\">
     <button class="board-recommend-remove" onclick="removeRecommendation()">&lt;</button>
     <p class="board-recommend-cnt" th:text="${boardDto.recommendCnt}"></p>
     <button class="board-recommend-add" onclick="addRecommendation()">&gt;</button>
@@ -69,95 +69,12 @@
       <div class="board-reply-content"></div>
     </div>
   </div>
-
+  <input type="hidden" id="board-hidden-id" th:value="${boardDto.id}">
+  <input type="hidden" id="board-hidden-recommend" th:value="${boardDto.recommendationStatus}">
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script>
-		(function () {
-			createFormatDate(document.querySelector('.board-user-createDate'), 'data-createDate')
-			getReplies();
-		}());
-
-		function createFormatDate(element, attributeName) {
-			const now = new Date();
-			const createDateElement = element
-			const diff = now - new Date(createDateElement.getAttribute(attributeName));
-			const diffMinutes = Math.floor(diff / (1000 * 60));
-			let diffMessage = ''
-			if (diffMinutes < 60) {
-				diffMessage = diffMinutes + '분 전';
-			} else if (diffMinutes < 60 * 24) {
-				diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
-			} else {
-				diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
-			}
-			createDateElement.innerHTML = createDateElement.innerHTML + '  ' + diffMessage;
-		}
-
-		function getReplies() {
-			axios.get('/reply/[[${boardDto.id}]]')
-					.then(res => {
-						const replies = res.data.map(reply => {
-							return `
-							 <div class="board-reply">
-                <div class="board-reply-header">
-                  <div class="board-reply-user">
-                    <div class="board-reply-name">${reply.memberName}</div>
-                    <div class="board-reply-date" data-reply-date="${reply.createDate}"></div>
-                  </div>
-                  <div class="board-reply-recommend">
-                    <button class="board-reply-recommend-remove">&lt;</button>
-                    <p class="board-reply-recommend-cnt">0</p>
-                    <button class="board-reply-recommend-add">&gt;</button>
-                  </div>
-                </div>
-                <div class="board-reply-content">${reply.content}</div>
-              </div>
-							`
-						}).join('');
-						document.querySelector('.board-reply-container').innerHTML = replies;
-						document.querySelectorAll('.board-reply-date').forEach(e => createFormatDate(e, 'data-reply-date'))
-					})
-					.catch(err => {
-						console.log(err);
-					});
-		}
-
-		function removeRecommendation() {
-			axios.post('/board/recommend/remove/[[${boardDto.id}]]')
-					.then(res => {
-						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
-					})
-					.catch(err => {
-						console.log(err);
-					})
-		}
-
-		function addRecommendation() {
-			axios.post('/board/recommend/add/[[${boardDto.id}]]')
-					.then(res => {
-						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
-					})
-					.catch(err => {
-						console.log(err);
-					});
-		}
-
-		function registerReply() {
-			const replyDTO = {
-				boardId: '[[${boardDto.id}]]',
-        content: document.querySelector('.board-reply-register-text').value
-      }
-			axios.post('/reply/', replyDTO)
-					.then(res => {
-						getReplies();
-						document.querySelector('.board-reply-register-text').value = '';
-					})
-					.catch(err => {
-						console.log(err)
-					})
-		}
-  </script>
+  <script th:src="@{/js/board.js}"></script>
+<!--  <script>-->
 </div>
 </body>
 </html>

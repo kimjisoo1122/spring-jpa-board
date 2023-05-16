@@ -49,7 +49,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
-
     private BooleanExpression titleLike(String title) {
         return StringUtils.hasText(title) ? board.title.like(generateLikePattern(title)) : null;
     }

@@ -35,33 +35,12 @@
       </div>
     </div>
     <div class="board-right">
-      <span th:text="'조회수 ' + ${board.viewCnt}">조회수</span>
-      <span>댓글 0</span>
-      <span th:text="'추천수 ' + ${board.recommendCnt}">추천수</span>
+      <span th:text="'조회수 ' + ${board.viewCnt}"/>
+      <span th:text="'댓글 ' + ${board.replyCnt}"/>
+      <span th:text="'추천수 ' + ${board.recommendCnt}"/>
     </div>
   </div>
-  <script>
-		const now = new Date();
-		const createDateElements = document.querySelectorAll('.board-user-createDate');
-		createDateElements.forEach(e => {
-			const createDate = new Date(e.getAttribute('data-createDate'));
-			const diff = now - createDate;
-			const diffMinutes = Math.floor(diff / (1000 * 60));
-			let diffMessage = ''
-			if (diffMinutes < 60) {
-				if (diffMinutes == 0) {
-					diffMessage = '방금 전'
-				} else {
-					diffMessage = diffMinutes + '분 전';
-        }
-			} else if (diffMinutes < 60 * 24) {
-				diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
-			} else {
-				diffMessage = Math.floor(diffMinutes / (60 * 24)) + '일 전';
-			}
-			e.innerHTML = e.innerHTML + '  ' + diffMessage;
-		})
-  </script>
+  <script th:src="@{/js/boardList.js}"></script>
 </div>
 </body>
 </html>

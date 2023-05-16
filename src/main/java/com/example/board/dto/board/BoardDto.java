@@ -2,6 +2,7 @@ package com.example.board.dto.board;
 
 import com.example.board.dto.common.BaseDto;
 import com.example.board.entity.Board;
+import com.example.board.entity.enums.RecommendationStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ public class BoardDto extends BaseDto {
     private int viewCnt;
     private int recommendCnt;
     private int replyCnt;
+    private RecommendationStatus recommendationStatus;
 
 
     public BoardDto(Board board) {
@@ -34,7 +36,9 @@ public class BoardDto extends BaseDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.categoryName = board.getCategory().getName();
+        this.categoryParentName = board.getCategory().getParent().getName();
         this.viewCnt = board.getViewCnt();
         this.recommendCnt = board.getRecommendCnt();
+        this.replyCnt = board.getReplies().size();
     }
 }

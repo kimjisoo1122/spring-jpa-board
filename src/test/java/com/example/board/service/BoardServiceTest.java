@@ -3,7 +3,11 @@ package com.example.board.service;
 import com.example.board.TestDataUtil;
 import com.example.board.dto.MemberDto;
 import com.example.board.dto.board.BoardDto;
-import com.example.board.entity.*;
+import com.example.board.entity.Board;
+import com.example.board.entity.BoardRecommendHistory;
+import com.example.board.entity.Category;
+import com.example.board.entity.Member;
+import com.example.board.entity.enums.RecommendationStatus;
 import com.example.board.repository.board.BoardRecommendRepository;
 import com.example.board.repository.board.BoardViewRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -113,4 +117,5 @@ class BoardServiceTest {
         boardService.removeRecommendation(member.getId(), board.getId());
         assertThat(boardRecommendHistory.getStatus()).isEqualTo(RecommendationStatus.NOT_VOTED);
     }
+
 }

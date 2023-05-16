@@ -26,4 +26,17 @@ public class ReplyController {
             @PathVariable("boardId") Long boardId) {
         return replyService.findByBoardId(boardId);
     }
+
+    @PostMapping("/recommend/{type}/{replyId}")
+    public ReplyDto recommend(
+            @PathVariable("type") String type,
+            @PathVariable("replyId") Long replyId) {
+
+        if (type.equals("add")) {
+            replyService.addRecommendation(SecurityUtil.getMemberIdByAuthentication(), replyId);
+        } else if (type.equals("remove")) {
+            replyService.removeRecommendation(SecurityUtil.getMemberIdByAuthentication(), replyId);
+        }
+        return replyService.findReplyDtoById(replyId);
+    }
 }

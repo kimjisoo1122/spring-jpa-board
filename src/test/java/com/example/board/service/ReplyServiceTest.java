@@ -4,10 +4,9 @@ import com.example.board.TestDataUtil;
 import com.example.board.dto.MemberDto;
 import com.example.board.dto.ReplyDto;
 import com.example.board.dto.board.BoardDto;
-import com.example.board.entity.Board;
-import com.example.board.entity.Category;
-import com.example.board.entity.Member;
-import com.example.board.entity.Reply;
+import com.example.board.entity.*;
+import com.example.board.entity.enums.RecommendationStatus;
+import com.example.board.repository.reply.ReplyRecommendRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +16,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
+import static com.example.board.entity.enums.RecommendationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -30,6 +29,8 @@ class ReplyServiceTest {
 
     @Autowired
     ReplyService replyService;
+    @Autowired
+    ReplyRecommendRepository replyRecommendRepository;
     @Autowired
     TestDataUtil testDataUtil;
     @Autowired
@@ -83,7 +84,57 @@ class ReplyServiceTest {
         em.clear();
         List<ReplyDto> replies = replyService.findByBoardId(board.getId());
 
+        // 게시글에 등록된 리플 확인
+        Board findBoard = em.find(Board.class, board.getId());
+
         // then
         assertThat(replies).hasSize(2);
+        assertThat(findBoard.getReplies()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("추천수 UP&DOWN")
+    void recommend() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category category = testDataUtil.createTestCategory("질문", null);
+        Board board = testDataUtil.createTestBoard(member, category, boardDto);
+
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setContent("댓글내용1");
+        replyDto.setBoardId(board.getId());
+        replyDto.setMemberId(member.getId());
+        Long replyId = replyService.register(replyDto);
+
+        Reply reply = replyService.findById(replyId).orElse(null);
+        assertThat(reply).isNotNull();
+
+        // when
+        RecommendationStatus status = replyService.addRecommendation(member.getId(), replyId);
+        ReplyRecommendHistory replyRecommendHistory =
+                replyRecommendRepository.findByMemberIdAndReplyId(member.getId(), replyId).orElse(null);
+
+        // then
+        assertThat(replyRecommendHistory).isNotNull();
+        assertThat(replyRecommendHistory.getStatus()).isEqualTo(UP_VOTED).isEqualTo(status)
+                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+        assertThat(replyRecommendHistory.getMember()).isSameAs(member);
+        assertThat(replyRecommendHistory.getReply()).isSameAs(reply);
+        assertThat(reply.getRecommendCnt()).isEqualTo(1);
+
+        RecommendationStatus status1 = replyService.addRecommendation(member.getId(), replyId);
+        assertThat(replyRecommendHistory.getStatus()).isEqualTo(NOT_VOTED).isEqualTo(status1)
+                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+        assertThat(reply.getRecommendCnt()).isEqualTo(0);
+
+        RecommendationStatus status2 = replyService.removeRecommendation(member.getId(), replyId);
+        assertThat(replyRecommendHistory.getStatus()).isEqualTo(DOWN_VOTED).isEqualTo(status2)
+                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+        assertThat(reply.getRecommendCnt()).isEqualTo(-1);
+
+        RecommendationStatus status3 = replyService.removeRecommendation(member.getId(), replyId);
+        assertThat(replyRecommendHistory.getStatus()).isEqualTo(NOT_VOTED).isEqualTo(status3)
+                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+        assertThat(reply.getRecommendCnt()).isEqualTo(0);
     }
 }

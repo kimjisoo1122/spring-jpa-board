@@ -35,10 +35,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "parent_id")
-//    private Board parent;
-
     @OneToMany(mappedBy = "board")
     private List<Reply> replies = new ArrayList<>();
 

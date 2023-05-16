@@ -5,24 +5,22 @@ import com.example.board.entity.enums.RecommendationStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class BoardRecommendHistory extends BaseEntity {
+public class ReplyRecommendHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_recommend_id")
+    @Column(name = "reply_recommend_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "reply_id")
+    private Reply reply;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -31,14 +29,13 @@ public class BoardRecommendHistory extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RecommendationStatus status;
 
-    public static BoardRecommendHistory createHistory(Board board, Member member, RecommendationStatus status) {
-        BoardRecommendHistory boardRecommendHistory = new BoardRecommendHistory();
-        boardRecommendHistory.board = board;
-        boardRecommendHistory.member = member;
-        boardRecommendHistory.status = status;
-        return boardRecommendHistory;
+    public static ReplyRecommendHistory createHistory(Reply reply, Member member, RecommendationStatus status) {
+        ReplyRecommendHistory replyRecommendHistory = new ReplyRecommendHistory();
+        replyRecommendHistory.reply = reply;
+        replyRecommendHistory.member = member;
+        replyRecommendHistory.status = status;
+        return replyRecommendHistory;
     }
-
     public void updateStatus(RecommendationStatus status) {
         this.status = status;
     }

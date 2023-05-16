@@ -2,6 +2,7 @@ package com.example.board.controller;
 
 import com.example.board.dto.board.BoardDto;
 import com.example.board.dto.board.BoardSearchCondition;
+import com.example.board.entity.enums.RecommendationStatus;
 import com.example.board.service.BoardService;
 import com.example.board.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,9 @@ public class BoardController {
     public String board(
             @PathVariable("boardId") Long boardId,
             Model model) {
+        // 조회수
         boardService.increaseViewCnt(SecurityUtil.getMemberIdByAuthentication(), boardId);
+
         BoardDto boardDto = boardService.findBoardDtoById(boardId);
         model.addAttribute("boardDto", boardDto);
         return "/board/board";
@@ -65,11 +68,15 @@ public class BoardController {
     public BoardDto recommend(
             @PathVariable("type") String type,
             @PathVariable("boardId") Long boardId) {
+
+        RecommendationStatus recommendationStatus = RecommendationStatus.NOT_VOTED;
         if (type.equals("add")) {
-            boardService.addRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
+            recommendationStatus = boardService.addRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
         } else if (type.equals("remove")) {
-            boardService.removeRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
+            recommendationStatus = boardService.removeRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
         }
+        BoardDto boardDto = boardService.findBoardDtoById(boardId);
+        boardDto.setRecommendationStatus(recommendationStatus);
         return boardService.findBoardDtoById(boardId);
     }
 }

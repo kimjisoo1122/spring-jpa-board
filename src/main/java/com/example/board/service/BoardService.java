@@ -3,17 +3,19 @@ package com.example.board.service;
 import com.example.board.dto.board.BoardDto;
 import com.example.board.dto.board.BoardSearchCondition;
 import com.example.board.entity.*;
+import com.example.board.entity.enums.RecommendationStatus;
 import com.example.board.repository.board.BoardRecommendRepository;
 import com.example.board.repository.board.BoardRepository;
 import com.example.board.repository.board.BoardViewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.example.board.entity.enums.RecommendationStatus.*;
 
 @Service
 @Transactional
@@ -25,16 +27,20 @@ public class BoardService {
     private final CategoryService categoryService;
     private final BoardViewRepository boardViewRepository;
     private final BoardRecommendRepository boardRecommendRepository;
-    private final MessageSource ms;
 
     public Optional<Board> findById(Long boardId) {
         return boardRepository.findById(boardId);
     }
 
     public BoardDto findBoardDtoById(Long boardId) {
-        return boardRepository.findById(boardId)
+        BoardDto boardDto = boardRepository.findById(boardId)
                 .map(BoardDto::new)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
+
+        // 추천 이력 조회
+        boardRecommendRepository.findByMemberIdAndBoardId(boardDto.getMemberId(), boardId)
+                .ifPresent(recommendHistory -> boardDto.setRecommendationStatus(recommendHistory.getStatus()));
+        return boardDto;
     }
 
     public Long register(BoardDto boardDTO) {
@@ -75,7 +81,7 @@ public class BoardService {
         return boardViewRepository.findByMemberIdAndBoardId(memberId, boardId).isPresent();
     }
 
-    public void addRecommendation(Long memberId, Long boardId) {
+    public RecommendationStatus addRecommendation(Long memberId, Long boardId) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
         Board board = boardRepository.findById(boardId)
@@ -85,28 +91,24 @@ public class BoardService {
                 boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
 
         if (boardRecommendHistory == null) {
-            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.UP_VOTED));
+            BoardRecommendHistory history = BoardRecommendHistory.createHistory(board, member, UP_VOTED);
+            boardRecommendRepository.save(history);
             board.addRecommendation(1);
-            return;
+            return UP_VOTED;
         }
 
-        switch (boardRecommendHistory.getStatus()) {
-            case NOT_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.UP_VOTED);
-                board.addRecommendation(1);
-                break;
-            case UP_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
-                board.removeRecommendation(1);
-                break;
-//            case DOWNVOTED:
-//                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
-//                board.addRecommendation(2);
-//                break;
+        if (boardRecommendHistory.getStatus() == NOT_VOTED) {
+            boardRecommendHistory.updateStatus(UP_VOTED);
+            board.addRecommendation(1);
+        } else if (boardRecommendHistory.getStatus() == UP_VOTED){
+            boardRecommendHistory.updateStatus(NOT_VOTED);
+            board.removeRecommendation(1);
         }
+
+        return boardRecommendHistory.getStatus();
     }
 
-    public void removeRecommendation(Long memberId, Long boardId) {
+    public RecommendationStatus removeRecommendation(Long memberId, Long boardId) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
         Board board = boardRepository.findById(boardId)
@@ -116,24 +118,20 @@ public class BoardService {
                 boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
 
         if (boardRecommendHistory == null) {
-            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.DOWN_VOTED));
+            BoardRecommendHistory history = BoardRecommendHistory.createHistory(board, member, DOWN_VOTED);
+            boardRecommendRepository.save(history);
             board.removeRecommendation(1);
-            return;
+            return DOWN_VOTED;
         }
 
-        switch (boardRecommendHistory.getStatus()) {
-            case NOT_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.DOWN_VOTED);
-                board.removeRecommendation(1);
-                break;
-            case DOWN_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
-                board.addRecommendation(1);
-                break;
-//            case UPVOTED:
-//                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
-//                board.removeRecommendation(2);
-//                break;
+        if (boardRecommendHistory.getStatus() == NOT_VOTED) {
+            boardRecommendHistory.updateStatus(DOWN_VOTED);
+            board.removeRecommendation(1);
+        } else if (boardRecommendHistory.getStatus() == DOWN_VOTED){
+            boardRecommendHistory.updateStatus(NOT_VOTED);
+            board.addRecommendation(1);
         }
+
+        return boardRecommendHistory.getStatus();
     }
 }

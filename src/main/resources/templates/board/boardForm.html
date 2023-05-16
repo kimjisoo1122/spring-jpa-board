@@ -50,13 +50,7 @@
       </div>
     </form>
   </div>
-  <script>
-		const textAreaElement = document.querySelector('textarea');
-		textAreaElement.addEventListener('input', () => {
-			textAreaElement.style.height = 'auto';
-			textAreaElement.style.height = `${textAreaElement.scrollHeight}px`;
-		})
-  </script>
+  <script th:src="@{/js/boardForm.js}"></script>
 </div>
 </body>
 </html>

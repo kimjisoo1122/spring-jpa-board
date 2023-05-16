@@ -3,6 +3,7 @@ package com.example.board.entity;
 import com.example.board.dto.MemberDto;
 import com.example.board.entity.common.Address;
 import com.example.board.entity.common.BaseEntity;
+import com.example.board.entity.enums.UserRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

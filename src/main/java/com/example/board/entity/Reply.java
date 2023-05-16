@@ -27,9 +27,22 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Reply(String content, Board board, Member member) {
-        this.content = content;
-        this.board = board;
-        this.member = member;
+    private int recommendCnt;
+
+    public static Reply createReply(String content, Board board, Member member) {
+        Reply reply = new Reply();
+        reply.content = content;
+        reply.board = board;
+        reply.member = member;
+        reply.recommendCnt = 0;
+        return reply;
+    }
+
+    public void addRecommendation(int cnt) {
+        recommendCnt += cnt;
+    }
+
+    public void removeRecommendation(int cnt) {
+        recommendCnt -= cnt;
     }
 }
