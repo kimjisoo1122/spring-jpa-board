@@ -1,19 +1,27 @@
 package com.example.board.service;
 
 import com.example.board.entity.Category;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Transactional
+@Commit
+@ActiveProfiles("local")
 class CategoryServiceTest {
 
     @Autowired
     CategoryService categoryService;
 
     @Test
+    @DisplayName("카테고리 등록")
     void register() {
         // 테스트에서 진행하는 각각의 메소드는 개별 트랜잭션임. -> 서로 영속컨텍스트공유 X
         // given

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,7 +20,6 @@ import java.util.Optional;
 public class ReplyService {
 
     private final ReplyRepository replyRepository;
-    private final BoardService boardService;
     private final MemberService memberService;
     private final BoardRepository boardRepository;
 
@@ -37,7 +37,9 @@ public class ReplyService {
     public Optional<Reply> findById(Long replyId) {
         return replyRepository.findById(replyId);
     }
-    public List<ReplyDto> findFromBoardId(Long boardId) {
-        return replyRepository.findByBoardId(boardId);
+    public List<ReplyDto> findByBoardId(Long boardId) {
+        return replyRepository.findByBoardId(boardId).stream()
+                .map(ReplyDto::new)
+                .collect(Collectors.toList());
     }
 }

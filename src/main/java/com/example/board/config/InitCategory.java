@@ -7,17 +7,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 @Component
 @RequiredArgsConstructor
 public class InitCategory {
 
     private final InitCategoryService initCategoryService;
-    @PostConstruct
-    public void init() {
-        initCategoryService.init();
-    }
+
+//    @Profile("local")
+//    @PostConstruct
+//    public void init() {
+//        initCategoryService.init();
+//    }
+//    @Profile("test")
+//    @PostConstruct
+//    public void initForTest() {
+//        initCategoryService.init();
+//    }
+
     @Service
     @Transactional
     @RequiredArgsConstructor

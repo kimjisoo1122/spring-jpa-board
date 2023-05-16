@@ -1,13 +1,14 @@
 package com.example.board.service;
 
-import com.example.board.dto.board.BoardDto;
+import com.example.board.TestDataUtil;
 import com.example.board.dto.MemberDto;
 import com.example.board.dto.ReplyDto;
+import com.example.board.dto.board.BoardDto;
 import com.example.board.entity.Board;
+import com.example.board.entity.Category;
 import com.example.board.entity.Member;
 import com.example.board.entity.Reply;
-import com.example.board.TestDataUtil;
-import com.example.board.repository.board.BoardRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -27,47 +31,59 @@ class ReplyServiceTest {
     @Autowired
     ReplyService replyService;
     @Autowired
-    BoardService boardService;
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    BoardRepository boardRepository;
+    TestDataUtil testDataUtil;
     @Autowired
     EntityManager em;
+    BoardDto boardDto = TestDataUtil.getTestBoardDto();
+    MemberDto memberDto = TestDataUtil.getTestMemberDto();
 
     @Test
-    void 댓글등록() throws Exception {
+    @DisplayName("댓글 등록")
+    void register() throws Exception {
         // given
-        MemberDto testMemberDto = TestDataUtil.getTestMemberDTO();
-        // when
-        Long memberId = memberService.join(testMemberDto);
-        Member member = memberService.findById(memberId).orElse(null);
-        // then
-        assertNotNull(member);
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category category = testDataUtil.createTestCategory("질문", null);
+        Board board = testDataUtil.createTestBoard(member, category, boardDto);
 
-        // given
-        BoardDto testBoardDto = TestDataUtil.getTestBoardDTO();
-        testBoardDto.setMemberId(memberId);
         // when
-        Long boardId = boardService.register(testBoardDto);
-        Board board = boardRepository.findById(boardId).orElse(null);
-        // then
-        assertNotNull(board);
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setContent("댓글내용");
+        replyDto.setBoardId(board.getId());
+        replyDto.setMemberId(member.getId());
+        Long replyId = replyService.register(replyDto);
 
-        // given
-        ReplyDto replyDTO = new ReplyDto();
-        replyDTO.setContent("test");
-        replyDTO.setBoardId(boardId);
-        replyDTO.setMemberId(memberId);
-        //when
-        Long replyId = replyService.register(replyDTO);
-        Reply reply = replyService.findById(replyId).orElse(null);
         //then
-        assertNotNull(reply);
+        Reply reply = replyService.findById(replyId).orElse(null);
+        assertThat(reply).isNotNull();
+    }
+
+    @Test
+    @DisplayName("게시글의 댓글 조회")
+    void findByBoardId() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category category = testDataUtil.createTestCategory("질문", null);
+        Board board = testDataUtil.createTestBoard(member, category, boardDto);
+        memberDto.setEmail("test@test.com");
+        Member member2 = testDataUtil.createTestMember(memberDto);
+
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setContent("댓글내용1");
+        replyDto.setBoardId(board.getId());
+        replyDto.setMemberId(member.getId());
+        ReplyDto replyDto2 = new ReplyDto();
+        replyDto2.setContent("댓글내용2");
+        replyDto2.setBoardId(board.getId());
+        replyDto2.setMemberId(member2.getId());
+        replyService.register(replyDto);
+        replyService.register(replyDto2);
+
+        // when
         em.flush();
         em.clear();
-        Board board2 = boardRepository.findById(boardId).orElse(null);
-        System.out.println("board.getReplies() = " + board2.getReplies());
+        List<ReplyDto> replies = replyService.findByBoardId(board.getId());
 
+        // then
+        assertThat(replies).hasSize(2);
     }
 }

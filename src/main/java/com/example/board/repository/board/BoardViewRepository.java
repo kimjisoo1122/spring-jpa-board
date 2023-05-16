@@ -1,35 +1,11 @@
 package com.example.board.repository.board;
 
 import com.example.board.entity.BoardViewHistory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class BoardViewRepository {
+public interface BoardViewRepository extends JpaRepository<BoardViewHistory, Long> {
 
-    private final EntityManager em;
-
-    public void save(BoardViewHistory boardViewHistory) {
-        em.persist(boardViewHistory);
-    }
-
-    public Optional<BoardViewHistory> findByMemberIdAndBoardId(Long memberId, Long boardId) {
-        String jpql =
-                "select bv " +
-                "from BoardViewHistory bv " +
-                "join bv.member m " +
-                "join bv.board b " +
-                "where m.id = :memberId " +
-                "and b.id = :boardId";
-        List<BoardViewHistory> boardViewHistories = em.createQuery(jpql, BoardViewHistory.class)
-                .setParameter("memberId", memberId)
-                .setParameter("boardId", boardId)
-                .getResultList();
-        return boardViewHistories.isEmpty() ? Optional.empty() : Optional.of(boardViewHistories.get(0));
-    }
+    Optional<BoardViewHistory> findByMemberIdAndBoardId(Long memberId, Long boardId);
 }

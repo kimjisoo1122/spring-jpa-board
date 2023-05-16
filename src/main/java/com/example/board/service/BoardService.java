@@ -7,6 +7,7 @@ import com.example.board.repository.board.BoardRecommendRepository;
 import com.example.board.repository.board.BoardRepository;
 import com.example.board.repository.board.BoardViewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class BoardService {
     private final CategoryService categoryService;
     private final BoardViewRepository boardViewRepository;
     private final BoardRecommendRepository boardRecommendRepository;
+    private final MessageSource ms;
 
     public Optional<Board> findById(Long boardId) {
         return boardRepository.findById(boardId);
@@ -57,7 +59,7 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
         Member member = memberService.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("멤버가 조회되지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("멤버정보가 조회되지 않습니다."));
 
         // 조회 이력 있는 경우 중복조회하지 않는다.
         if (isAlreadyViewed(memberId, boardId)) {
@@ -83,17 +85,17 @@ public class BoardService {
                 boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
 
         if (boardRecommendHistory == null) {
-            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.UPVOTED));
+            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.UP_VOTED));
             board.addRecommendation(1);
             return;
         }
 
         switch (boardRecommendHistory.getStatus()) {
             case NOT_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.UPVOTED);
+                boardRecommendHistory.updateStauts(RecommendationStatus.UP_VOTED);
                 board.addRecommendation(1);
                 break;
-            case UPVOTED:
+            case UP_VOTED:
                 boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
                 board.removeRecommendation(1);
                 break;
@@ -114,17 +116,17 @@ public class BoardService {
                 boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId).orElse(null);
 
         if (boardRecommendHistory == null) {
-            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.DOWNVOTED));
+            boardRecommendRepository.save(new BoardRecommendHistory(board, member, RecommendationStatus.DOWN_VOTED));
             board.removeRecommendation(1);
             return;
         }
 
         switch (boardRecommendHistory.getStatus()) {
             case NOT_VOTED:
-                boardRecommendHistory.updateStauts(RecommendationStatus.DOWNVOTED);
+                boardRecommendHistory.updateStauts(RecommendationStatus.DOWN_VOTED);
                 board.removeRecommendation(1);
                 break;
-            case DOWNVOTED:
+            case DOWN_VOTED:
                 boardRecommendHistory.updateStauts(RecommendationStatus.NOT_VOTED);
                 board.addRecommendation(1);
                 break;

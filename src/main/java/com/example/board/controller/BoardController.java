@@ -32,21 +32,21 @@ public class BoardController {
     }
 
     @GetMapping("/register")
-    public String registerForm(@ModelAttribute("boardDTO") BoardDto boardDTO) {
+    public String registerForm(@ModelAttribute("boardDto") BoardDto boardDto) {
         return "board/boardForm";
     }
 
     @PostMapping("/register")
     public String register(
-            @ModelAttribute("boardDTO")
-            @Valid BoardDto boardDTO,
+            @ModelAttribute("boardDto")
+            @Valid BoardDto boardDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return "board/boardForm";
         }
-        boardDTO.setMemberId(SecurityUtil.getMemberIdByAuthentication());
-        boardService.register(boardDTO);
+        boardDto.setMemberId(SecurityUtil.getMemberIdByAuthentication());
+        boardService.register(boardDto);
         return "redirect:/board";
     }
 
@@ -55,8 +55,8 @@ public class BoardController {
             @PathVariable("boardId") Long boardId,
             Model model) {
         boardService.increaseViewCnt(SecurityUtil.getMemberIdByAuthentication(), boardId);
-        BoardDto boardDTO = boardService.findBoardDtoById(boardId);
-        model.addAttribute("boardDTO", boardDTO);
+        BoardDto boardDto = boardService.findBoardDtoById(boardId);
+        model.addAttribute("boardDto", boardDto);
         return "/board/board";
     }
 

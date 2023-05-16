@@ -24,6 +24,6 @@ public class ReplyController {
     @GetMapping("{boardId}")
     public List<ReplyDto> getReplies(
             @PathVariable("boardId") Long boardId) {
-        return replyService.findFromBoardId(boardId);
+        return replyService.findByBoardId(boardId);
     }
 }

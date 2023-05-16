@@ -12,35 +12,35 @@
 <body>
 <div layout:fragment="content" class="content">
   <div class="board-header">
-    <p th:text="${boardDTO.categoryParentName}"></p>
+    <p th:text="${boardDto.categoryParentName}"></p>
     <p> / </p>
-    <p th:text="${boardDTO.categoryName}" class="board-header-subcategory"></p>
+    <p th:text="${boardDto.categoryName}" class="board-header-subcategory"></p>
   </div>
   <div class="board-user">
     <p
       class="board-user-name"
-      th:text="${boardDTO.getMemberName}"></p>
+      th:text="${boardDto.getMemberName}"></p>
     <p
       class="board-user-createDate"
-      th:text="${#temporals.format(boardDTO.createDate, 'yyyy-MM-dd')}"
-      th:data-createDate="${boardDTO.createDate}"></p>
+      th:text="${#temporals.format(boardDto.createDate, 'yyyy-MM-dd')}"
+      th:data-createDate="${boardDto.createDate}"></p>
     <p
       class="board-user-viewCnt"
-      th:text="'조회수 ' +  ${boardDTO.viewCnt}"></p>
+      th:text="'조회수 ' +  ${boardDto.viewCnt}"></p>
   </div>
   <div class="board-title">
-    <h1 th:text="${boardDTO.title}"></h1>
+    <h1 th:text="${boardDto.title}"></h1>
   </div>
   <div class="board-content">
-    <p th:text="${boardDTO.content}"></p>
+    <p th:text="${boardDto.content}"></p>
   </div>
   <div class="board-recommend">
     <button class="board-recommend-remove" onclick="removeRecommendation()">&lt;</button>
-    <p class="board-recommend-cnt" th:text="${boardDTO.recommendCnt}"></p>
+    <p class="board-recommend-cnt" th:text="${boardDto.recommendCnt}"></p>
     <button class="board-recommend-add" onclick="addRecommendation()">&gt;</button>
   </div>
   <div class="board-reply-cnt">
-    <p th:text="${boardDTO.replyCnt} + '개의 댓글'"></p>
+    <p th:text="${boardDto.replyCnt} + '개의 댓글'"></p>
   </div>
   <div class="board-reply-register-container">
     <textarea
@@ -95,7 +95,7 @@
 		}
 
 		function getReplies() {
-			axios.get('/reply/[[${boardDTO.id}]]')
+			axios.get('/reply/[[${boardDto.id}]]')
 					.then(res => {
 						const replies = res.data.map(reply => {
 							return `
@@ -124,7 +124,7 @@
 		}
 
 		function removeRecommendation() {
-			axios.post('/board/recommend/remove/[[${boardDTO.id}]]')
+			axios.post('/board/recommend/remove/[[${boardDto.id}]]')
 					.then(res => {
 						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
 					})
@@ -134,7 +134,7 @@
 		}
 
 		function addRecommendation() {
-			axios.post('/board/recommend/add/[[${boardDTO.id}]]')
+			axios.post('/board/recommend/add/[[${boardDto.id}]]')
 					.then(res => {
 						document.querySelector('.board-recommend-cnt').innerHTML = res.data.recommendCnt;
 					})
@@ -145,7 +145,7 @@
 
 		function registerReply() {
 			const replyDTO = {
-				boardId: '[[${boardDTO.id}]]',
+				boardId: '[[${boardDto.id}]]',
         content: document.querySelector('.board-reply-register-text').value
       }
 			axios.post('/reply/', replyDTO)

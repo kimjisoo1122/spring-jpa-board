@@ -18,7 +18,7 @@
   <div class="board-container" th:each="board : ${boards}">
     <div class="board-left">
       <div class="board-user">
-        <p th:text="${board.name}">이름</p>
+        <p th:text="${board.memberName}">이름</p>
         <p
           class="board-user-createDate"
           th:text="${#temporals.format(board.createDate, 'yyyy-MM-dd')}"
