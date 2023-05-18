@@ -35,9 +35,23 @@
       </div>
     </div>
     <div class="board-right">
-      <span th:text="'조회수 ' + ${board.viewCnt}"/>
-      <span th:text="'댓글 ' + ${board.replyCnt}"/>
-      <span th:text="'추천수 ' + ${board.recommendCnt}"/>
+      <div class="board-update-container">
+        <div class="board-update-hidden">
+          <button>수정하기</button>
+          <button>삭제하기</button>
+        </div>
+        <div
+          class="board-update-btn"
+          onclick="viewUpdateBox(this)"
+          th:if="${#authentication.principal.memberId == board.memberId}">
+          <p class="board-update-btn-text">...</p>
+        </div>
+      </div>
+      <div class="board-cnt-container">
+        <span th:text="'조회수 ' + ${board.viewCnt}"/>
+        <span th:text="'댓글 ' + ${board.replyCnt}"/>
+        <span th:text="'추천수 ' + ${board.recommendCnt}"/>
+      </div>
     </div>
   </div>
   <script th:src="@{/js/boardList.js}"></script>

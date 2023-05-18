@@ -4,6 +4,7 @@ import com.example.board.dto.ReplyDto;
 import com.example.board.service.ReplyService;
 import com.example.board.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,14 +18,16 @@ public class ReplyController {
 
     @PostMapping
     public void register(@RequestBody ReplyDto replyDTO) {
-        replyDTO.setMemberId(SecurityUtil.getMemberIdByAuthentication());
-        replyService.register(replyDTO);
+        if (StringUtils.hasText(replyDTO.getContent())) {
+            replyDTO.setMemberId(SecurityUtil.getMemberIdByAuthentication());
+            replyService.register(replyDTO);
+        }
     }
 
     @GetMapping("{boardId}")
     public List<ReplyDto> getReplies(
             @PathVariable("boardId") Long boardId) {
-        return replyService.findByBoardId(boardId);
+        return replyService.findByBoardId(boardId, SecurityUtil.getMemberIdByAuthentication());
     }
 
     @PostMapping("/recommend/{type}/{replyId}")
@@ -32,11 +35,12 @@ public class ReplyController {
             @PathVariable("type") String type,
             @PathVariable("replyId") Long replyId) {
 
+        Long memberId = SecurityUtil.getMemberIdByAuthentication();
         if (type.equals("add")) {
-            replyService.addRecommendation(SecurityUtil.getMemberIdByAuthentication(), replyId);
+            replyService.addRecommendation(memberId, replyId);
         } else if (type.equals("remove")) {
-            replyService.removeRecommendation(SecurityUtil.getMemberIdByAuthentication(), replyId);
+            replyService.removeRecommendation(memberId, replyId);
         }
-        return replyService.findReplyDtoById(replyId);
+        return replyService.findReplyDtoById(replyId, memberId);
     }
 }

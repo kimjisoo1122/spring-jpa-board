@@ -68,23 +68,9 @@
   </div>
 
   <div class="board-reply-container">
-    <div class="board-reply">
-      <div class="board-reply-header">
-        <div class="board-reply-user">
-          <div class="board-reply-name"></div>
-          <div class="board-reply-date"></div>
-        </div>
-        <div class="board-reply-recommend">
-          <button class="board-reply-recommend-remove">&lt;</button>
-          <p class="board-reply-recommend-cnt">0</p>
-          <button class="board-reply-recommend-add">&gt;</button>
-        </div>
-      </div>
-      <div class="board-reply-content"></div>
-    </div>
+    <!-- 댓글 비동기 데이터     -->
   </div>
   <input type="hidden" id="board-hidden-id" th:value="${boardDto.id}">
-  <input type="hidden" id="board-hidden-recommend" th:value="${boardDto.recommendationStatus}">
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script th:src="@{/js/board.js}"></script>

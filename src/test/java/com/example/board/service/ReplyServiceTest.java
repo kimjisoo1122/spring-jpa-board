@@ -82,7 +82,7 @@ class ReplyServiceTest {
         // when
         em.flush();
         em.clear();
-        List<ReplyDto> replies = replyService.findByBoardId(board.getId());
+        List<ReplyDto> replies = replyService.findByBoardId(board.getId(), member.getId());
 
         // 게시글에 등록된 리플 확인
         Board findBoard = em.find(Board.class, board.getId());
@@ -117,24 +117,24 @@ class ReplyServiceTest {
         // then
         assertThat(replyRecommendHistory).isNotNull();
         assertThat(replyRecommendHistory.getStatus()).isEqualTo(UP_VOTED).isEqualTo(status)
-                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+                .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
         assertThat(replyRecommendHistory.getMember()).isSameAs(member);
         assertThat(replyRecommendHistory.getReply()).isSameAs(reply);
         assertThat(reply.getRecommendCnt()).isEqualTo(1);
 
         RecommendationStatus status1 = replyService.addRecommendation(member.getId(), replyId);
         assertThat(replyRecommendHistory.getStatus()).isEqualTo(NOT_VOTED).isEqualTo(status1)
-                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+                .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
         assertThat(reply.getRecommendCnt()).isEqualTo(0);
 
         RecommendationStatus status2 = replyService.removeRecommendation(member.getId(), replyId);
         assertThat(replyRecommendHistory.getStatus()).isEqualTo(DOWN_VOTED).isEqualTo(status2)
-                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+                .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
         assertThat(reply.getRecommendCnt()).isEqualTo(-1);
 
         RecommendationStatus status3 = replyService.removeRecommendation(member.getId(), replyId);
         assertThat(replyRecommendHistory.getStatus()).isEqualTo(NOT_VOTED).isEqualTo(status3)
-                .isEqualTo(replyService.findReplyDtoById(replyId).getRecommendationStatus());
+                .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
         assertThat(reply.getRecommendCnt()).isEqualTo(0);
     }
 }

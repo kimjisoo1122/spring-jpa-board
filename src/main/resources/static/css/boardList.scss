@@ -65,12 +65,62 @@
 
 .board-right {
   width: 200px;
+  height: 70px;
   font-size: 11px;
-  position: absolute;
-  bottom: 10px;
-  right: -10px;
-  span {
-    padding: 0 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  .board-update-container {
+    align-self: flex-end;
+    margin-right: 50px;
+    display: flex;
+    gap: 10px;
+  }
+  .board-update-btn {
+    cursor: pointer;
+    position: relative;
+
+    .board-update-btn-text {
+      position: absolute;
+      top: -15px;
+      color: lightgray;
+      letter-spacing: 1.5px;
+      font-size: 25px;
+    }
+  }
+  .board-update-btn-text:hover {
+    color: lightskyblue;
+  }
+
+  .board-update-hidden {
+    display: none;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+    padding: 3px 2px;
+
+    button {
+      width: 60px;
+      height: 20px;
+      font-size: 8px;
+      border: none;
+      background-color: white;
+      cursor: pointer;
+    }
+  }
+  .board-update-hidden.flex-on {
+    display: flex;
+  }
+
+  .board-update-hidden button:hover {
+    color: lightskyblue;
+  }
+  .board-cnt-container {
+    span {
+      padding: 0 5px;
+    }
   }
 }
-

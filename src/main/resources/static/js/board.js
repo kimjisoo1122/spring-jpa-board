@@ -31,7 +31,7 @@ function createFormatDate(element, attributeName) {
 	const diffMinutes = Math.floor(diff / (1000 * 60));
 	let diffMessage = ''
 	if (diffMinutes < 60) {
-		diffMessage = diffMinutes + '분 전';
+		diffMessage = diffMinutes === 0 ? '방금 전' : diffMinutes + '분 전';
 	} else if (diffMinutes < 60 * 24) {
 		diffMessage = Math.floor(diffMinutes / 60) + '시간 전';
 	} else {
@@ -44,6 +44,23 @@ function getReplies() {
 	axios.get(`/reply/${boardId}`)
 			.then(res => {
 				const replies = res.data.map(reply => {
+					const updateContainer =
+							reply.author
+								?
+									`
+										<div class="board-reply-update-container">
+											<div class="board-reply-update-hidden">
+													<div class="board-reply-update-hidden-btn">수정하기</div>
+													<div class="board-reply-update-hidden-btn">삭제하기</div>
+											</div>
+											<div
+												class="board-reply-update-btn"
+												onclick="viewUpdateBox(this)">
+												<p class="board-reply-update-btn-text">...</p>
+											</div>
+										</div>
+									`
+								: ``;
 					return `
 							 <div class="board-reply">
                 <div class="board-reply-header">
@@ -69,9 +86,10 @@ function getReplies() {
                     	style="${reply.recommendationStatus == 'UP_VOTED' ? 'color : lightskyblue' : 'color : lightgray'}"
                     	onclick="addReplyRecommendation(this)">&gt;
                     </button>
-                  </div>
+                  	</div>
                 </div>
                 <div class="board-reply-content">${reply.content}</div>
+                ${updateContainer}
               </div>
 							`
 				}).join('');
@@ -129,12 +147,16 @@ function removeReplyRecommendation(element) {
 			});
 }
 
-
 function registerReply() {
+	const content = document.querySelector('.board-reply-register-text').value;
+	console.log(content.length)
+	if (content.length === 0) {
+		return;
+	}
 	const replyDTO = {
 		boardId: boardId,
-		content: document.querySelector('.board-reply-register-text').value
-	}
+		content: content
+	};
 	axios.post('/reply/', replyDTO)
 			.then(res => {
 				getReplies();
@@ -143,4 +165,9 @@ function registerReply() {
 			.catch(err => {
 				console.log(err)
 			})
+}
+
+function viewUpdateBox(element) {
+	const updateBoxElement = element.previousElementSibling;
+	updateBoxElement.classList.toggle('flex-on');
 }

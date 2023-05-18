@@ -55,10 +55,12 @@ public class BoardController {
     public String board(
             @PathVariable("boardId") Long boardId,
             Model model) {
-        // 조회수
-        boardService.increaseViewCnt(SecurityUtil.getMemberIdByAuthentication(), boardId);
 
-        BoardDto boardDto = boardService.findBoardDtoById(boardId);
+        Long memberId = SecurityUtil.getMemberIdByAuthentication();
+        // 조회수
+        boardService.increaseViewCnt(memberId, boardId);
+
+        BoardDto boardDto = boardService.findBoardDtoById(boardId, memberId);
         model.addAttribute("boardDto", boardDto);
         return "/board/board";
     }
@@ -69,14 +71,14 @@ public class BoardController {
             @PathVariable("type") String type,
             @PathVariable("boardId") Long boardId) {
 
+        Long memberId = SecurityUtil.getMemberIdByAuthentication();
+
         RecommendationStatus recommendationStatus = RecommendationStatus.NOT_VOTED;
         if (type.equals("add")) {
-            recommendationStatus = boardService.addRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
+            recommendationStatus = boardService.addRecommendation(memberId, boardId);
         } else if (type.equals("remove")) {
-            recommendationStatus = boardService.removeRecommendation(SecurityUtil.getMemberIdByAuthentication(), boardId);
+            recommendationStatus = boardService.removeRecommendation(memberId, boardId);
         }
-        BoardDto boardDto = boardService.findBoardDtoById(boardId);
-        boardDto.setRecommendationStatus(recommendationStatus);
-        return boardService.findBoardDtoById(boardId);
+        return boardService.findBoardDtoById(boardId, memberId);
     }
 }

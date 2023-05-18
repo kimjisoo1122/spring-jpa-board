@@ -151,6 +151,60 @@
 }
 
 .board-reply-content {
-  padding: 10px;
+  padding: 10px 20px 10px 10px;
   font-size: 15px;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+.board-reply-update-container {
+  display: flex;
+  justify-content: flex-end;
+  height: 30px;
+  margin-right: 20px;
+
+  .board-reply-update-hidden {
+    width: 120px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-right: 10px;
+    padding: 5px;
+    display: none;
+
+    .board-reply-update-hidden-btn {
+      font-size: 6px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    :first-child {
+      border-right: 1px solid #eee;
+    }
+  }
+
+  .board-reply-update-hidden-btn:hover {
+    color: lightskyblue;
+  }
+
+  .board-reply-update-btn {
+
+    .board-reply-update-btn-text {
+      font-size: 25px;
+      color: lightgray;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+    }
+  }
+
+  .board-reply-update-btn-text:hover {
+    color: lightskyblue;
+  }
+}
+
+.board-reply-update-hidden.flex-on {
+  display: flex;
 }

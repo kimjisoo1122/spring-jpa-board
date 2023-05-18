@@ -65,7 +65,7 @@ class BoardServiceTest {
         Board board = testDataUtil.createTestBoard(member, childCategory, boardDto);
 
         // when
-        BoardDto findBoardDto = boardService.findBoardDtoById(board.getId());
+        BoardDto findBoardDto = boardService.findBoardDtoById(board.getId(), member.getId());
 
         // then
         assertThat(findBoardDto.getTitle()).isEqualTo(boardDto.getTitle());

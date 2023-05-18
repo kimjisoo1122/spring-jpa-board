@@ -45,23 +45,26 @@ public class ReplyService {
         return replyRepository.findById(replyId);
     }
 
-    public ReplyDto findReplyDtoById(Long replyId) {
+    public ReplyDto findReplyDtoById(Long replyId, Long memberId) {
         ReplyDto replyDto = replyRepository.findById(replyId)
                 .map(ReplyDto::new)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 조회되지 않습니다."));
 
-        replyRecommendRepository.findByMemberIdAndReplyId(replyDto.getMemberId(), replyId)
+        replyRecommendRepository.findByMemberIdAndReplyId(memberId, replyId)
                 .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus()));
         return replyDto;
     }
 
-    public List<ReplyDto> findByBoardId(Long boardId) {
+    public List<ReplyDto> findByBoardId(Long boardId, Long memberId) {
         List<ReplyDto> replyDtos = replyRepository.findByBoardIdOrderByCreateDateAsc(boardId).stream()
                 .map(ReplyDto::new)
                 .collect(Collectors.toList());
 
-        replyDtos.forEach(replyDto -> replyRecommendRepository.findByMemberIdAndReplyId(replyDto.getMemberId(), replyDto.getId())
-                .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus())));
+        replyDtos.forEach(replyDto -> {
+
+            replyRecommendRepository.findByMemberIdAndReplyId(memberId, replyDto.getId())
+                    .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus()));
+        });
 
         return replyDtos;
     }

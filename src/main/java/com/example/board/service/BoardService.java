@@ -32,13 +32,13 @@ public class BoardService {
         return boardRepository.findById(boardId);
     }
 
-    public BoardDto findBoardDtoById(Long boardId) {
+    public BoardDto findBoardDtoById(Long boardId, Long memberId) {
         BoardDto boardDto = boardRepository.findById(boardId)
                 .map(BoardDto::new)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 조회되지 않습니다."));
 
         // 추천 이력 조회
-        boardRecommendRepository.findByMemberIdAndBoardId(boardDto.getMemberId(), boardId)
+        boardRecommendRepository.findByMemberIdAndBoardId(memberId, boardId)
                 .ifPresent(recommendHistory -> boardDto.setRecommendationStatus(recommendHistory.getStatus()));
         return boardDto;
     }

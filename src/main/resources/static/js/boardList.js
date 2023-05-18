@@ -18,3 +18,7 @@ createDateElements.forEach(e => {
 	}
 	e.innerHTML = e.innerHTML + '  ' + diffMessage;
 })
+function viewUpdateBox(element) {
+	const updateBoxElement = element.previousElementSibling;
+	updateBoxElement.classList.toggle('flex-on');
+}

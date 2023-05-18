@@ -18,7 +18,7 @@
   padding: 10px 6px;
 }
 .boardForm textarea {
-  height: 200px;
+  min-height: 200px;
   resize: none;
   font-style: italic;
 }
