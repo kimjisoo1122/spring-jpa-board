@@ -56,9 +56,14 @@ public class ReplyService {
     }
 
     public List<ReplyDto> findByBoardId(Long boardId) {
-        return replyRepository.findByBoardIdOrderByCreateDateAsc(boardId).stream()
+        List<ReplyDto> replyDtos = replyRepository.findByBoardIdOrderByCreateDateAsc(boardId).stream()
                 .map(ReplyDto::new)
                 .collect(Collectors.toList());
+
+        replyDtos.forEach(replyDto -> replyRecommendRepository.findByMemberIdAndReplyId(replyDto.getMemberId(), replyDto.getId())
+                .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus())));
+
+        return replyDtos;
     }
 
     public RecommendationStatus addRecommendation(Long memberId, Long replyId) {

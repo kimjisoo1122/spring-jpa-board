@@ -1,8 +1,6 @@
 const boardId = document.querySelector('#board-hidden-id').value;
-const recommendationStatus = document.querySelector('#board-hidden-recommend').value;
 
 createFormatDate(document.querySelector('.board-user-createDate'), 'data-createDate')
-updateRecommend(recommendationStatus);
 getReplies();
 
 function updateRecommend(recommendationStatus) {
@@ -12,6 +10,16 @@ function updateRecommend(recommendationStatus) {
 		document.querySelector('.board-recommend-remove').style.color = 'tomato';
 	} else {
 		const recommendBtns = document.querySelectorAll('.board-recommend button');
+		recommendBtns.forEach(btn => btn.style.color = 'lightgray');
+	}
+}
+function updateReplyRecommend(recommendationStatus, replyRecommendCntElement) {
+	if (recommendationStatus === 'UP_VOTED') {
+		replyRecommendCntElement.nextElementSibling.style.color = 'lightskyblue';
+	} else if (recommendationStatus === 'DOWN_VOTED') {
+		replyRecommendCntElement.previousElementSibling.style.color = 'tomato';
+	} else {
+		const recommendBtns = replyRecommendCntElement.parentElement.querySelectorAll('button');
 		recommendBtns.forEach(btn => btn.style.color = 'lightgray');
 	}
 }
@@ -41,12 +49,26 @@ function getReplies() {
                 <div class="board-reply-header">
                   <div class="board-reply-user">
                     <div class="board-reply-name">${reply.memberName}</div>
-                    <div class="board-reply-date" data-reply-date="${reply.createDate}"></div>
+                    <div 
+                    	class="board-reply-date" 
+                    	data-reply-date="${reply.createDate}"></div>
                   </div>
                   <div class="board-reply-recommend">
-                    <button class="board-reply-recommend-remove">&lt;</button>
-                    <p class="board-reply-recommend-cnt">${reply.recommendCnt}</p>
-                    <button class="board-reply-recommend-add">&gt;</button>
+                    <button 
+                    	class="board-reply-recommend-remove"
+                    	style="${reply.recommendationStatus == 'DOWN_VOTED' ? 'color : tomato' : 'color : lightgray'}"
+                    	onclick="removeReplyRecommendation(this)">&lt;
+                    </button>
+                    <p 
+                    	class="board-reply-recommend-cnt"
+                    	data-replyId="${reply.id}"
+                    	data-status="${reply.recommendationStatus}">${reply.recommendCnt}
+                    </p>
+                    <button 
+                    	class="board-reply-recommend-add"
+                    	style="${reply.recommendationStatus == 'UP_VOTED' ? 'color : lightskyblue' : 'color : lightgray'}"
+                    	onclick="addReplyRecommendation(this)">&gt;
+                    </button>
                   </div>
                 </div>
                 <div class="board-reply-content">${reply.content}</div>
@@ -82,6 +104,31 @@ function addRecommendation() {
 				console.log(err);
 			});
 }
+function addReplyRecommendation(element) {
+	const recommendCntElement = element.previousElementSibling;
+	const replyId = recommendCntElement.getAttribute('data-replyId');
+	axios.post(`/reply/recommend/add/${replyId}`)
+			.then(res => {
+				recommendCntElement.innerHTML = res.data.recommendCnt;
+				updateReplyRecommend(res.data.recommendationStatus, recommendCntElement);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+}
+function removeReplyRecommendation(element) {
+	const recommendCntElement = element.nextElementSibling;
+	const replyId = recommendCntElement.getAttribute('data-replyId');
+	axios.post(`/reply/recommend/remove/${replyId}`)
+			.then(res => {
+				recommendCntElement.innerHTML = res.data.recommendCnt;
+				updateReplyRecommend(res.data.recommendationStatus, recommendCntElement);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+}
+
 
 function registerReply() {
 	const replyDTO = {

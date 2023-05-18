@@ -34,10 +34,24 @@
   <div class="board-content">
     <p th:text="${boardDto.content}"></p>
   </div>
-  <div class="\">
-    <button class="board-recommend-remove" onclick="removeRecommendation()">&lt;</button>
+  <div class="board-recommend">
+    <button
+      class="board-recommend-remove"
+      onclick="removeRecommendation()"
+      th:style="
+        ${boardDto.recommendationStatus != null && boardDto.recommendationStatus.name() == 'DOWN_VOTED'
+          ? 'color : tomato'
+          : 'color : lightgray'}">&lt;
+    </button>
     <p class="board-recommend-cnt" th:text="${boardDto.recommendCnt}"></p>
-    <button class="board-recommend-add" onclick="addRecommendation()">&gt;</button>
+    <button
+      class="board-recommend-add"
+      onclick="addRecommendation()"
+      th:style="
+        ${boardDto.recommendationStatus != null && boardDto.recommendationStatus.name() == 'UP_VOTED'
+          ? 'color : lightskyblue'
+          : 'color : lightgray'}">&gt;
+    </button>
   </div>
   <div class="board-reply-cnt">
     <p th:text="${boardDto.replyCnt} + '개의 댓글'"></p>
@@ -74,7 +88,6 @@
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script th:src="@{/js/board.js}"></script>
-<!--  <script>-->
 </div>
 </body>
 </html>
