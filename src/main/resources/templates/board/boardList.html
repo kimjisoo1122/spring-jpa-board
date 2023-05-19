@@ -12,7 +12,7 @@
 <div layout:fragment="content" class="content">
   <div class="board-header">
     <button class="board-header-register">
-      <a th:href="@{/board/register(page=${page.pageable.offset}, size=${page.pageable.pageSize})}">
+      <a th:href="@{/board/register(page=${pageHandler.nowPage}, size=${pageHandler.pageSize})}">
         작성하기
       </a>
     </button>
@@ -40,8 +40,8 @@
       <div class="board-update-container">
         <div
           class="board-update-hidden"
-          th:data-offset="${page.pageable.offset}"
-          th:data-size="${page.pageable.pageSize}"
+          th:data-page="${pageHandler.nowPage}"
+          th:data-size="${pageHandler.pageSize}"
           th:data-id="${board.id}">
             <button
               class="board-update-hidden-modify"

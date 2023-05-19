@@ -51,7 +51,7 @@
         </button>
       </div>
       <input type="hidden" th:field="*{id}" th:value="${boardDto.id}">
-      <input type="hidden" name="page" th:value="${pageable?.offset}">
+      <input type="hidden" name="page" th:value="${pageable?.pageNumber}">
       <input type="hidden" name="size" th:value="${pageable?.pageSize}">
     </form>
   </div>

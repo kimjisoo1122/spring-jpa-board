@@ -27,16 +27,16 @@ function viewUpdateBox(element) {
 function deleteBoard(element) {
 	if (confirm("삭제하시겠습니까?")) {
 		const parentElement = element.parentElement;
-		const offset = parentElement.getAttribute('data-offset');
+		const page = parentElement.getAttribute('data-page');
 		const size = parentElement.getAttribute('data-size');
 		const boardId = parentElement.getAttribute('data-id');
 		axios.delete(`/board/${boardId}`, {
 					params: {
-						page: offset,
+						page: page,
 						size: size
 					}})
 					.then(res => {
-						location.href = `/board?page=${offset}&size=${size}`;
+						location.href = `/board?page=${page}&size=${size}`;
 					})
 					.catch(err => {
 						console.log(err);
@@ -48,10 +48,10 @@ function updateBoard(element) {
 
 	if (confirm("수정하시겠습니까?")) {
 		const parentElement = element.parentElement;
-		const offset = parentElement.getAttribute('data-offset');
+		const page = parentElement.getAttribute('data-page');
 		const size = parentElement.getAttribute('data-size');
 		const boardId = parentElement.getAttribute('data-id');
 
-		location.href = `/board/update/${boardId}?&page=${offset}&size=${size}`;
+		location.href = `/board/update/${boardId}?&page=${page}&size=${size}`;
 	}
 }
