@@ -75,7 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         // 엑세스토큰 재발급
-        String newAccessToken = JwtUtil.createJwt(email, JwtUtil.ACEESS_TOKEN_EXPIRATION);
+        String newAccessToken = JwtUtil.createJwt(email, JwtUtil.ACCESS_TOKEN_EXPIRATION);
         Cookie newJwtCookie = CookieUtil.createJwtCookie(JwtUtil.ACCESS_TOKEN, newAccessToken);
         response.addCookie(newJwtCookie);
 

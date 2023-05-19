@@ -50,8 +50,8 @@ function getReplies() {
 									`
 										<div class="board-reply-update-container">
 											<div class="board-reply-update-hidden">
-													<div class="board-reply-update-hidden-btn">수정하기</div>
-													<div class="board-reply-update-hidden-btn">삭제하기</div>
+													<div class="board-reply-update-hidden-modify">수정하기</div>
+													<div class="board-reply-update-hidden-delete">삭제하기</div>
 											</div>
 											<div
 												class="board-reply-update-btn"

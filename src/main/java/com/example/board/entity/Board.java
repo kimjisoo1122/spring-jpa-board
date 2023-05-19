@@ -35,10 +35,15 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Reply> replies = new ArrayList<>();
 
-    private int boardLevel;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardRecommendHistory> boardRecommendHistories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardViewHistory> boardViewHistories = new ArrayList<>();
+
     private int viewCnt;
     private int recommendCnt;
 
@@ -69,4 +74,11 @@ public class Board extends BaseEntity {
     public void removeRecommendation(int cnt) {
         this.recommendCnt -= cnt;
     }
+
+    public void update(BoardDto boardDto) {
+        this.content = boardDto.getContent();
+        this.title= boardDto.getTitle();
+    }
+
+
 }

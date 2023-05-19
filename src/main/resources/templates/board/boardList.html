@@ -12,10 +12,12 @@
 <div layout:fragment="content" class="content">
   <div class="board-header">
     <button class="board-header-register">
-      <a th:href="@{/board/register}">작성하기</a>
+      <a th:href="@{/board/register(page=${page.pageable.offset}, size=${page.pageable.pageSize})}">
+        작성하기
+      </a>
     </button>
     <h1 class="board-header-title">게시판</h1></div>
-  <div class="board-container" th:each="board : ${boards}">
+  <div class="board-container" th:each="board : ${page.content}">
     <div class="board-left">
       <div class="board-user">
         <p th:text="${board.memberName}">이름</p>
@@ -36,9 +38,19 @@
     </div>
     <div class="board-right">
       <div class="board-update-container">
-        <div class="board-update-hidden">
-          <button>수정하기</button>
-          <button>삭제하기</button>
+        <div
+          class="board-update-hidden"
+          th:data-offset="${page.getPageable().getOffset()}"
+          th:data-size="${page.getPageable().getPageSize()}"
+          th:data-id="${board.id}">
+            <button
+              class="board-update-hidden-modify"
+              onclick="updateBoard(this)">수정하기
+            </button>
+            <button
+              class="board-update-hidden-delete"
+              onclick="deleteBoard(this)">삭제하기
+            </button>
         </div>
         <div
           class="board-update-btn"
@@ -54,6 +66,7 @@
       </div>
     </div>
   </div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script th:src="@{/js/boardList.js}"></script>
 </div>
 </body>

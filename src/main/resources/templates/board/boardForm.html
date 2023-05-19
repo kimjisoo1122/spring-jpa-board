@@ -12,10 +12,10 @@
 <body>
 <div layout:fragment="content" class="content">
   <div class="boardform-container">
-    <h1 class="boardForm-title">작성하기</h1>
+    <h1 class="boardForm-title" th:text="${boardDto?.id == null ? '작성하기' : '수정하기'}"/>
     <form
       class="boardForm"
-      th:action="@{/board/register}"
+      th:action="${boardDto?.id == null ? '/board/register' :  '/board/update'}"
       th:method="post"
       th:object="${boardDto}">
       <label th:for="title"></label>
@@ -41,13 +41,18 @@
       <div class="boardform-button-container">
         <button
           type="button"
-          class="boardform-cancelbtn">취소
+          class="boardform-cancelbtn"
+          onclick="cancel()">취소
         </button>
         <button
           type="submit"
-          class="boardform-regBtn">등록
+          class="boardform-regBtn"
+          th:text="${boardDto.id == null ? '등록' : '수정'}">
         </button>
       </div>
+      <input type="hidden" th:field="*{id}" th:value="${boardDto.id}">
+      <input type="hidden" name="page" th:value="${pageable?.offset}">
+      <input type="hidden" name="size" th:value="${pageable?.pageSize}">
     </form>
   </div>
   <script th:src="@{/js/boardForm.js}"></script>

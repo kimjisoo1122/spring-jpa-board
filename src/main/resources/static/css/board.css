@@ -158,7 +158,7 @@
   padding: 5px;
   display: none;
 }
-.board-reply-update-container .board-reply-update-hidden .board-reply-update-hidden-btn {
+.board-reply-update-container .board-reply-update-hidden div[class*=board-reply-update-hidden] {
   font-size: 6px;
   color: black;
   font-weight: bold;
@@ -171,8 +171,11 @@
 .board-reply-update-container .board-reply-update-hidden :first-child {
   border-right: 1px solid #eee;
 }
-.board-reply-update-container .board-reply-update-hidden-btn:hover {
+.board-reply-update-container .board-reply-update-hidden .board-reply-update-hidden-modify:hover {
   color: lightskyblue;
+}
+.board-reply-update-container .board-reply-update-hidden .board-reply-update-hidden-delete:hover {
+  color: tomato;
 }
 .board-reply-update-container .board-reply-update-btn .board-reply-update-btn-text {
   font-size: 25px;

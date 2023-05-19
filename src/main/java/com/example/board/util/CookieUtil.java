@@ -19,7 +19,7 @@ public interface CookieUtil {
     static Cookie createJwtCookie(String cookieName, String jwt) {
         Cookie jwtCookie = new Cookie(cookieName, jwt);
         if (cookieName.equals(JwtUtil.ACCESS_TOKEN)) {
-            jwtCookie.setMaxAge(JwtUtil.ACEESS_TOKEN_EXPIRATION.intValue() / 1000);
+            jwtCookie.setMaxAge(JwtUtil.ACCESS_TOKEN_EXPIRATION.intValue() / 1000);
         } else if (cookieName.equals(JwtUtil.REFRESH_TOKEN)) {
             jwtCookie.setMaxAge(JwtUtil.REFRESH_TOKEN_EXPIRATION.intValue() / 1000);
         }

@@ -114,8 +114,11 @@
 .board-right .board-update-hidden.flex-on {
   display: flex;
 }
-.board-right .board-update-hidden button:hover {
+.board-right .board-update-hidden-modify:hover {
   color: lightskyblue;
+}
+.board-right .board-update-hidden-delete:hover {
+  color: tomato;
 }
 .board-right .board-cnt-container span {
   padding: 0 5px;

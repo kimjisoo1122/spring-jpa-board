@@ -22,7 +22,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
              Authentication authentication) throws IOException, ServletException {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         // accessToken 생성
-        String accessJwt = JwtUtil.createJwt(userDetails.getEmail(), JwtUtil.ACEESS_TOKEN_EXPIRATION);
+        String accessJwt = JwtUtil.createJwt(userDetails.getEmail(), JwtUtil.ACCESS_TOKEN_EXPIRATION);
         Cookie accessTokenCookie = CookieUtil.createJwtCookie(JwtUtil.ACCESS_TOKEN, accessJwt);
         // refreshToken 생성
         String refreshJwt = JwtUtil.createJwt(userDetails.getEmail(), JwtUtil.REFRESH_TOKEN_EXPIRATION);

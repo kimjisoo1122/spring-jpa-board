@@ -17,10 +17,10 @@ public class JwtUtil {
     private static String secretKey;
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
-    public static final Long ACEESS_TOKEN_EXPIRATION = 1800000L; // 30분
+    public static final Long ACCESS_TOKEN_EXPIRATION = 1800000L; // 30분
     public static final Long REFRESH_TOKEN_EXPIRATION = 604800000L; // 7일
 
-    @Value("${spring.jwt.secret}")
+    @Value("${jwt.secret}")
     private void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }

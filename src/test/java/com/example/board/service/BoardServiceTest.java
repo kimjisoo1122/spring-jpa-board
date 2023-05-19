@@ -3,10 +3,7 @@ package com.example.board.service;
 import com.example.board.TestDataUtil;
 import com.example.board.dto.MemberDto;
 import com.example.board.dto.board.BoardDto;
-import com.example.board.entity.Board;
-import com.example.board.entity.BoardRecommendHistory;
-import com.example.board.entity.Category;
-import com.example.board.entity.Member;
+import com.example.board.entity.*;
 import com.example.board.entity.enums.RecommendationStatus;
 import com.example.board.repository.board.BoardRecommendRepository;
 import com.example.board.repository.board.BoardViewRepository;
@@ -15,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,6 +30,8 @@ class BoardServiceTest {
     BoardRecommendRepository boardRecommendRepository;
     @Autowired
     TestDataUtil testDataUtil;
+    @PersistenceContext
+    EntityManager em;
 
     // 인스턴스변수들은 클래스가 메모리에 올라가고 차후 인스턴스생성때마다 할당
     BoardDto boardDto = TestDataUtil.getTestBoardDto();
@@ -118,4 +120,56 @@ class BoardServiceTest {
         assertThat(boardRecommendHistory.getStatus()).isEqualTo(RecommendationStatus.NOT_VOTED);
     }
 
+    @Test
+    @DisplayName("업데이트")
+    void update() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category parentCategory = testDataUtil.createTestCategory("커뮤니티", null);
+        Category childCategory = testDataUtil.createTestCategory("질문", parentCategory.getId());
+        Board board = testDataUtil.createTestBoard(member, childCategory, boardDto);
+        // when
+        boardDto.setId(board.getId());
+        boardDto.setContent("업데이트 내용");
+        boardDto.setTitle("업데이트 제목");
+        boardService.update(boardDto);
+
+        // then
+        assertThat(board.getContent()).isEqualTo(boardDto.getContent());
+        assertThat(board.getTitle()).isEqualTo(boardDto.getTitle());
+    }
+
+
+
+    @Test
+    @DisplayName("삭제")
+    void delete() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category parentCategory = testDataUtil.createTestCategory("커뮤니티", null);
+        Category childCategory = testDataUtil.createTestCategory("질문", parentCategory.getId());
+        Board board = testDataUtil.createTestBoard(member, childCategory, boardDto);
+        Long boardId = board.getId();
+        BoardViewHistory boardViewHistory = BoardViewHistory.createBoardViewHistory(board, member);
+        boardViewRepository.save(boardViewHistory);
+        BoardRecommendHistory boardRecommendHistory = BoardRecommendHistory.createHistory(board, member, RecommendationStatus.UP_VOTED);
+        boardRecommendRepository.save(boardRecommendHistory);
+
+        em.flush();
+        em.clear();
+
+        // when
+        int cnt = boardService.delete(boardId, member.getId());
+
+        // then
+        Board findBoard = boardService.findById(boardId).orElse(null);
+        assertThat(findBoard).isNull();
+        assertThat(cnt).isEqualTo(1);
+
+        BoardViewHistory findView = boardViewRepository.findById(boardViewHistory.getId()).orElse(null);
+        assertThat(findView).isNull();
+        BoardRecommendHistory findRecommend = boardRecommendRepository.findById(boardRecommendHistory.getId()).orElse(null);
+        assertThat(findRecommend).isNull();
+
+    }
 }

@@ -35,7 +35,7 @@ class BoardRepositoryTest {
 
     @Test
     @DisplayName("글등록")
-    void register() throws Exception {
+    Board register() throws Exception {
         // given
         Member member = Member.createMember(memberDTO);
         em.persist(member);
@@ -53,6 +53,8 @@ class BoardRepositoryTest {
         assertThat(board.getContent()).isEqualTo(boardDto.getContent());
         assertThat(board.getCategory().getName()).isEqualTo(category.getName());
         assertThat(board.getMember().getName()).isEqualTo(memberDTO.getName());
+
+        return board;
     }
 
     @Test

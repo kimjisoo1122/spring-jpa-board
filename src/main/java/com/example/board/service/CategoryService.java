@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,7 @@ public class CategoryService {
             this.findById(parentId)
                     .ifPresentOrElse(category::setParent,
                             () -> {
-                                throw new IllegalArgumentException("부모 카테고리를 찾을 수 없습니다.");
+                                throw new NoSuchElementException("부모 카테고리를 찾을 수 없습니다.");
                             });
         }
         categoryRepository.save(category);
@@ -33,4 +34,5 @@ public class CategoryService {
     public Optional<Category> findByName(String categoryName) {
         return categoryRepository.findByName(categoryName);
     }
+
 }
