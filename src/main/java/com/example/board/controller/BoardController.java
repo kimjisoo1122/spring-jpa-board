@@ -3,10 +3,12 @@ package com.example.board.controller;
 import com.example.board.dto.board.BoardDto;
 import com.example.board.dto.board.BoardSearchCondition;
 import com.example.board.service.BoardService;
+import com.example.board.util.PageHandler;
 import com.example.board.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,10 +27,14 @@ public class BoardController {
     @GetMapping
     public String boardList(
             BoardSearchCondition boardSearchCondition,
-            Pageable pageable,
+            @PageableDefault(page = 1, size = 10) Pageable pageable,
             Model model) {
+
+
         Page<BoardDto> page = boardService.search(boardSearchCondition, pageable);
+        PageHandler pageHandler = new PageHandler(page, 10);
         model.addAttribute("page", page);
+        model.addAttribute("pageHandler", pageHandler);
         return "board/boardList";
     }
 

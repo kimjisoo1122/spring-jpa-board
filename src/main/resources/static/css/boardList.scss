@@ -129,3 +129,42 @@
     }
   }
 }
+
+.board-page-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    font-size: 14px;
+    text-decoration: none;
+    color: black;
+  }
+  a:active {
+    color: black;
+  }
+  a:hover {
+    color: lightskyblue;
+  }
+
+  .board-page-previous, .board-page-next {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .board-page-idx-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      padding: 0 5px;
+    }
+    .on {
+      color: lightskyblue;
+    }
+  }
+}
+
+

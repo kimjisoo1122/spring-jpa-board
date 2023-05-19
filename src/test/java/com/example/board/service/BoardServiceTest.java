@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -20,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@Commit
+@ActiveProfiles("local")
 class BoardServiceTest {
 
     @Autowired
@@ -170,6 +174,12 @@ class BoardServiceTest {
         assertThat(findView).isNull();
         BoardRecommendHistory findRecommend = boardRecommendRepository.findById(boardRecommendHistory.getId()).orElse(null);
         assertThat(findRecommend).isNull();
+
+    }
+
+    @Test
+    void testData() throws Exception {
+        testDataUtil.testBoardData(100);
 
     }
 }

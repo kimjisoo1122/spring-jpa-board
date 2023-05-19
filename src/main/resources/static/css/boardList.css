@@ -124,4 +124,37 @@
   padding: 0 5px;
 }
 
+.board-page-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.board-page-container a {
+  font-size: 14px;
+  text-decoration: none;
+  color: black;
+}
+.board-page-container a:active {
+  color: black;
+}
+.board-page-container a:hover {
+  color: lightskyblue;
+}
+.board-page-container .board-page-previous, .board-page-container .board-page-next {
+  padding: 0 10px;
+  font-size: 14px;
+}
+.board-page-container .board-page-idx-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.board-page-container .board-page-idx-container a {
+  padding: 0 5px;
+}
+.board-page-container .board-page-idx-container .on {
+  color: lightskyblue;
+}
+
 /*# sourceMappingURL=boardList.css.map */

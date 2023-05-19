@@ -66,4 +66,13 @@ public class TestDataUtil {
         boardDTO.setTitle("제목");
         return boardDTO;
     }
+
+    public void testBoardData(int cnt) {
+        BoardDto testBoardDto = getTestBoardDto();
+        testBoardDto.setMemberId(1L);
+        testBoardDto.setCategoryName("질문");
+        for (int i = 0; i < cnt; i++) {
+            boardService.register(testBoardDto);
+        }
+    }
 }

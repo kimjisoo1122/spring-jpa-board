@@ -40,8 +40,8 @@
       <div class="board-update-container">
         <div
           class="board-update-hidden"
-          th:data-offset="${page.getPageable().getOffset()}"
-          th:data-size="${page.getPageable().getPageSize()}"
+          th:data-offset="${page.pageable.offset}"
+          th:data-size="${page.pageable.pageSize}"
           th:data-id="${board.id}">
             <button
               class="board-update-hidden-modify"
@@ -66,8 +66,29 @@
       </div>
     </div>
   </div>
+  <div class="board-page-container" >
+    <a
+      class="board-page-previous"
+      th:if="${pageHandler.isPrevious()}"
+      th:href="@{/board(page=${pageHandler.startPage - 1}, size=${pageHandler.pageSize})}"
+      th:text="Previous"></a>
+    <div class="board-page-idx-container" th:each="i : ${#numbers.sequence(pageHandler.startPage, pageHandler.enePage)}">
+      <a
+        th:class="${pageHandler.nowPage == i ? 'on' : ''}"
+        th:href="@{/board(page=${i}, size=${pageHandler.pageSize})}"
+        th:text="${i}"></a>
+    </div>
+    <a
+      class="board-page-next"
+      th:if="${pageHandler.isNext()}"
+      th:href="@{/board(page=${pageHandler.enePage + 1}, size=${pageHandler.pageSize})}"
+      th:text="Next">
+    </a>
+  </div>
+
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script th:src="@{/js/boardList.js}"></script>
+
 </div>
 </body>
 </html>

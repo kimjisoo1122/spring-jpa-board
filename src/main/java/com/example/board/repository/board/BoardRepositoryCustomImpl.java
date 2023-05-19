@@ -25,6 +25,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
     @Override
     public Page<Board> search(BoardSearchCondition condition, Pageable pageable) {
+        long offset = (long) (pageable.getPageNumber() - 1) * pageable.getPageSize();
         List<Board> content = queryFactory
                 .select(board)
                 .from(board)
@@ -34,7 +35,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                         contentLike(condition.getContent()),
                         writerLike(condition.getWriter()))
                 .orderBy(board.id.desc())
-                .offset(pageable.getOffset())
+                .offset(offset)
                 .limit(pageable.getPageSize())
                 .fetch();
 
