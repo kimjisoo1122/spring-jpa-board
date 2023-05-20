@@ -137,4 +137,74 @@ class ReplyServiceTest {
                 .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
         assertThat(reply.getRecommendCnt()).isEqualTo(0);
     }
+
+    @Test
+    @DisplayName("삭제")
+    void delete() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category category = testDataUtil.createTestCategory("질문", null);
+        Board board = testDataUtil.createTestBoard(member, category, boardDto);
+
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setContent("댓글내용1");
+        replyDto.setBoardId(board.getId());
+        replyDto.setMemberId(member.getId());
+        Long replyId = replyService.register(replyDto);
+
+        Reply reply = replyService.findById(replyId).orElse(null);
+        assertThat(reply).isNotNull();
+
+        // when
+        RecommendationStatus status = replyService.addRecommendation(member.getId(), replyId);
+        ReplyRecommendHistory replyRecommendHistory =
+                replyRecommendRepository.findByMemberIdAndReplyId(member.getId(), replyId).orElse(null);
+
+        // then
+        assertThat(replyRecommendHistory).isNotNull();
+        assertThat(replyRecommendHistory.getStatus()).isEqualTo(UP_VOTED).isEqualTo(status)
+                .isEqualTo(replyService.findReplyDtoById(replyId, member.getId()).getRecommendationStatus());
+        assertThat(replyRecommendHistory.getMember()).isSameAs(member);
+        assertThat(replyRecommendHistory.getReply()).isSameAs(reply);
+        assertThat(reply.getRecommendCnt()).isEqualTo(1);
+
+        em.flush();
+        em.clear();
+        int cnt = replyService.delete(replyId, member.getId());
+
+        assertThat(cnt).isEqualTo(1);
+        assertThat(replyService.findById(replyId).orElse(null)).isNull();
+        assertThat(replyRecommendRepository.findByMemberIdAndReplyId(member.getId(), replyId).orElse(null)).isNull();
+    }
+
+    @Test
+    @DisplayName("업데이트")
+    void update() throws Exception {
+        // given
+        Member member = testDataUtil.createTestMember(memberDto);
+        Category category = testDataUtil.createTestCategory("질문", null);
+        Board board = testDataUtil.createTestBoard(member, category, boardDto);
+
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setContent("댓글내용1");
+        replyDto.setBoardId(board.getId());
+        replyDto.setMemberId(member.getId());
+        Long replyId = replyService.register(replyDto);
+
+        Reply reply = replyService.findById(replyId).orElse(null);
+        assertThat(reply).isNotNull();
+        // when
+        ReplyDto updateReplyDto = new ReplyDto();
+        updateReplyDto.setContent("test");
+        updateReplyDto.setId(replyId);
+        replyService.update(updateReplyDto, member.getId());
+
+        em.flush();
+        em.clear();
+        // then
+        Reply findReply = replyService.findById(replyId).orElse(null);
+        assertThat(findReply).isNotNull();
+        assertThat(findReply.getId()).isEqualTo(replyId);
+        assertThat(findReply.getContent()).isEqualTo(updateReplyDto.getContent());
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.board.entity;
 
+import com.example.board.dto.ReplyDto;
 import com.example.board.entity.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -49,5 +50,9 @@ public class Reply extends BaseEntity {
 
     public void removeRecommendation(int cnt) {
         recommendCnt -= cnt;
+    }
+
+    public void update(ReplyDto replyDto) {
+        this.content = replyDto.getContent();
     }
 }

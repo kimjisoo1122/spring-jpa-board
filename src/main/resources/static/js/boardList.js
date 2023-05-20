@@ -45,7 +45,6 @@ function deleteBoard(element) {
 }
 
 function updateBoard(element) {
-
 	if (confirm("수정하시겠습니까?")) {
 		const parentElement = element.parentElement;
 		const page = parentElement.getAttribute('data-page');

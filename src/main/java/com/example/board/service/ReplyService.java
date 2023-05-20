@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,17 +57,14 @@ public class ReplyService {
     }
 
     public List<ReplyDto> findByBoardId(Long boardId, Long memberId) {
-        List<ReplyDto> replyDtos = replyRepository.findByBoardIdOrderByCreateDateAsc(boardId).stream()
-                .map(ReplyDto::new)
+        return replyRepository.findByBoardIdOrderByCreateDateAsc(boardId).stream()
+                .map(reply -> {
+                    ReplyDto replyDto = new ReplyDto(reply);
+                    replyRecommendRepository.findByMemberIdAndReplyId(memberId, replyDto.getId())
+                            .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus()));
+                    return replyDto;
+                })
                 .collect(Collectors.toList());
-
-        replyDtos.forEach(replyDto -> {
-
-            replyRecommendRepository.findByMemberIdAndReplyId(memberId, replyDto.getId())
-                    .ifPresent(replyHistory -> replyDto.setRecommendationStatus(replyHistory.getStatus()));
-        });
-
-        return replyDtos;
     }
 
     public RecommendationStatus addRecommendation(Long memberId, Long replyId) {
@@ -119,5 +117,17 @@ public class ReplyService {
             reply.addRecommendation(1);
         }
         return replyRecommendHistory.getStatus();
+    }
+
+    public int delete(Long replyId, Long memberId) {
+        return replyRepository.deleteByIdAndMemberId(replyId, memberId);
+    }
+
+    public void update(ReplyDto replyDto, Long memberId) {
+        Reply reply = replyRepository.findByIdAndMemberId(replyDto.getId(), memberId)
+                .orElseThrow(() -> {
+                    throw new NoSuchElementException("조회된 댓글 정보가 없습니다.");
+                });
+        reply.update(replyDto);
     }
 }

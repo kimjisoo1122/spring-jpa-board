@@ -16,18 +16,46 @@
     <p> / </p>
     <p th:text="${boardDto.categoryName}" class="board-header-subcategory"></p>
   </div>
-  <div class="board-user">
-    <p
-      class="board-user-name"
-      th:text="${boardDto.getMemberName}"></p>
-    <p
-      class="board-user-createDate"
-      th:text="${#temporals.format(boardDto.createDate, 'yyyy-MM-dd')}"
-      th:data-createDate="${boardDto.createDate}"></p>
-    <p
-      class="board-user-viewCnt"
-      th:text="'조회수 ' +  ${boardDto.viewCnt}"></p>
+  <div class="board-profile-container">
+    <div class="board-user">
+      <p
+        class="board-user-name"
+        th:text="${boardDto.getMemberName}"></p>
+      <p
+        class="board-user-createDate"
+        th:text="${#temporals.format(boardDto.createDate, 'yyyy-MM-dd')}"
+        th:data-createDate="${boardDto.createDate}"></p>
+      <p
+        class="board-user-viewCnt"
+        th:text="'조회수 ' +  ${boardDto.viewCnt}"></p>
+    </div>
+    <div
+      th:if="${boardDto.memberId == #authentication.principal.memberId}"
+      class="board-update-container">
+      <div
+        class="board-update-hidden"
+        th:data-page="${pageable.pageNumber}"
+        th:data-size="${pageable.pageSize}"
+        th:data-id="${boardDto.id}">
+        <button
+          class="board-update-hidden-update"
+          onclick="updateBoard(this)"
+          th:text="수정하기">
+        </button>
+        <button
+          class="board-update-hidden-delete"
+          onclick="deleteBoard(this)"
+          th:text="삭제하기">
+        </button>
+      </div>
+      <div
+        class="board-update-btn"
+        onclick="viewUpdateBox(this)"
+        th:text="...">
+      </div>
+    </div>
   </div>
+
   <div class="board-title">
     <h1 th:text="${boardDto.title}"></h1>
   </div>
@@ -54,7 +82,11 @@
     </button>
   </div>
   <div class="board-reply-cnt">
-    <p th:text="${boardDto.replyCnt} + '개의 댓글'"></p>
+    <p
+      th:class="board-reply-cnt-text"``
+      th:text="${boardDto.replyCnt} + '개의 댓글'"
+      th:data-replyCnt="${boardDto.replyCnt}">
+    </p>
   </div>
   <div class="board-reply-register-container">
     <textarea

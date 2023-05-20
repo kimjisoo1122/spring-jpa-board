@@ -59,7 +59,7 @@ public class BoardController {
         }
         boardDto.setMemberId(SecurityUtil.getMemberIdByAuthentication());
         boardService.register(boardDto);
-        redirectAttributes.addAttribute("page", pageable.getOffset());
+        redirectAttributes.addAttribute("page", pageable.getPageNumber());
         redirectAttributes.addAttribute("size", pageable.getPageSize());
         return "redirect:/board";
     }
@@ -67,6 +67,7 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public String board(
             @PathVariable("boardId") Long boardId,
+            Pageable pageable,
             Model model) {
 
         Long memberId = SecurityUtil.getMemberIdByAuthentication();
@@ -75,6 +76,7 @@ public class BoardController {
 
         BoardDto boardDto = boardService.findBoardDtoById(boardId, memberId);
         model.addAttribute("boardDto", boardDto);
+        model.addAttribute("pageable", pageable);
         return "/board/board";
     }
 
@@ -98,8 +100,7 @@ public class BoardController {
     @ResponseBody
     public Pageable delete(
             @PathVariable("boardId") Long boardId,
-            Pageable pageable,
-            RedirectAttributes redirectAttributes) {
+            Pageable pageable) {
         boardService.delete(boardId, SecurityUtil.getMemberIdByAuthentication());
         return pageable;
     }
@@ -127,7 +128,7 @@ public class BoardController {
             return "board/boardForm";
         }
         boardService.update(boardDto);
-        redirectAttributes.addAttribute("page", pageable.getOffset());
+        redirectAttributes.addAttribute("page", pageable.getPageNumber());
         redirectAttributes.addAttribute("size", pageable.getPageSize());
         return "redirect:/board";
     }

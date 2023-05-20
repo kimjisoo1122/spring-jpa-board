@@ -110,6 +110,7 @@
   border: none;
   background-color: white;
   cursor: pointer;
+  font-weight: bold;
 }
 .board-right .board-update-hidden.flex-on {
   display: flex;

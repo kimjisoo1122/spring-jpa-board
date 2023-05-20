@@ -43,4 +43,14 @@ public class ReplyController {
         }
         return replyService.findReplyDtoById(replyId, memberId);
     }
+
+    @DeleteMapping("/{replyId}")
+    public int delete(@PathVariable("replyId") Long replyId) {
+        return replyService.delete(replyId, SecurityUtil.getMemberIdByAuthentication());
+    }
+
+    @PutMapping()
+    public void update(@RequestBody ReplyDto replyDto) {
+        replyService.update(replyDto, SecurityUtil.getMemberIdByAuthentication());
+    }
 }
